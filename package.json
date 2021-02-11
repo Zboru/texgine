@@ -21,6 +21,7 @@
     "dependencies": {
         "@inertiajs/inertia": "^0.8.4",
         "@inertiajs/inertia-vue": "^0.5.5",
+        "@mdi/font": "^5.9.55",
         "cross-env": "^7.0.3",
         "normalize.css": "^8.0.1",
         "primeflex": "^2.0.0",
