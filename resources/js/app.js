@@ -1,7 +1,10 @@
 import { App, plugin } from '@inertiajs/inertia-vue'
 import Vue from 'vue'
-
 Vue.use(plugin)
+
+import ToastService from 'primevue/toastservice';
+Vue.use(ToastService);
+
 
 import Layout from "./Layout/Layout";
 
