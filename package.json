@@ -22,6 +22,7 @@
         "@inertiajs/inertia": "^0.8.4",
         "@inertiajs/inertia-vue": "^0.5.5",
         "cross-env": "^7.0.3",
+        "normalize.css": "^8.0.1",
         "primeicons": "^4.1.0",
         "primevue": "^2.0.0",
         "resolve-url-loader": "^3.1.2",
