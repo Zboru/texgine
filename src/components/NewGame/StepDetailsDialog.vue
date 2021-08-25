@@ -1,10 +1,12 @@
 <template>
   <div v-if="show">
     <overlay @click="show=false"/>
-    <div class="flex h-screen w-screen justify-center items-center">
-      <add-step-card class="mx-1" v-model="step"></add-step-card>
-      <step-preview class="mx-1" :step="step"></step-preview>
-      <step-choices v-model="step"></step-choices>
+    <div class="h-screen w-screen flex justify-center items-center">
+      <div class="flex justify-center items-start">
+        <add-step-card @add="saveStep" class="mx-1" v-model="step"></add-step-card>
+        <step-preview class="mx-1" :step="step"></step-preview>
+        <step-choices class="mx-1" v-model="step"></step-choices>
+      </div>
     </div>
   </div>
 </template>
@@ -23,12 +25,12 @@ export default {
     AddStepCard,
     Overlay,
   },
-  props: ['value'],
+  props: ['value', 'steps'],
   data() {
     return {
       step: {
-        id: 'Test-1',
-        imageURL: 'https://i.imgur.com/JOf48jt.jpg',
+        id: null,
+        imageURL: null, // 'https://i.imgur.com/JOf48jt.jpg',
         description: null,
         choices: [],
       },
@@ -44,6 +46,11 @@ export default {
       },
     },
   },
-  methods: {},
+  methods: {
+    saveStep() {
+      console.log('test');
+      this.steps.push(this.step);
+    },
+  },
 };
 </script>

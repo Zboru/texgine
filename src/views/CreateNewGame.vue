@@ -10,7 +10,7 @@
 <!--      </div>-->
     </div>
     <portal to="dialog">
-      <step-details-dialog v-model="dialogs.step_details" />
+      <step-details-dialog :steps="game.steps" v-model="dialogs.step_details" />
     </portal>
   </div>
 </template>
@@ -25,6 +25,9 @@ export default {
     return {
       dialogs: {
         step_details: true,
+      },
+      game: {
+        steps: [],
       },
     };
   },

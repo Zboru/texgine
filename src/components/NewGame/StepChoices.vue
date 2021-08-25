@@ -9,23 +9,18 @@
 
     <div class="step-choices">
       <span v-for="(choice, index) in step.choices" :key="index">
-        <t-accordion class="mb-1" :title="choice.id">
-          <text-field label="ID" v-model="choice.id"></text-field>
-          <text-area label="Text" v-model="choice.text"></text-area>
-        </t-accordion>
+        <choice-accordion @delete="deleteChoice" class="mb-1" :choice="choice" />
       </span>
     </div>
   </div>
 </template>
 
 <script>
-import TAccordion from '../General/TAccordion.vue';
-import TextArea from '../General/TextArea.vue';
-import TextField from '../General/TextField.vue';
+import ChoiceAccordion from './ChoiceAccordion.vue';
 
 export default {
   name: 'StepChoices',
-  components: { TextField, TextArea, TAccordion },
+  components: { ChoiceAccordion },
   props: {
     value: Object,
   },
@@ -42,9 +37,12 @@ export default {
   methods: {
     addChoice() {
       this.step.choices.push({
-        id: null,
-        text: null,
+        id: 'choice',
+        text: 'Example choice',
       });
+    },
+    deleteChoice(choice) {
+      this.step.choices.splice(this.step.choices.indexOf(choice), 1);
     },
   },
 };
