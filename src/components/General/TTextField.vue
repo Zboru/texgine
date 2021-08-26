@@ -4,7 +4,7 @@
       <div class="absolute text-gray-500 pointer-events-none w-8 h-8 absolute top-8 transform translate-y-0.5 right-1">
         <slot name="icon"></slot>
       </div>
-    <input @keydown="$emit('keydown', $event)" @focus="$emit('focus')" @blur="$emit('blur')" :id="inputID"
+    <input autocomplete="off" @keydown="$emit('keydown', $event)" @focus="$emit('focus')" @blur="$emit('blur')" :id="inputID"
            v-model="modelValue" type="text" :placeholder="placeholder"
            class="block w-full px-3 py-2 text-black placeholder-gray-400
           transition duration-100 ease-in-out bg-white border border-gray-300
