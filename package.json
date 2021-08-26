@@ -12,6 +12,7 @@
     "autoprefixer": "9",
     "babel-runtime": "^6.26.0",
     "core-js": "^3.6.5",
+    "fabric": "^4.5.1",
     "lodash": "^4.17.21",
     "portal-vue": "^2.1.7",
     "postcss": "7",
