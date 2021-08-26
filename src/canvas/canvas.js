@@ -1,4 +1,5 @@
 import { fabric } from 'fabric';
+import Node from './node';
 
 class Canvas {
   constructor() {
@@ -6,6 +7,7 @@ class Canvas {
     this.unitScale = 10;
     this.canvasWidth = 150 * this.unitScale;
     this.canvasHeight = 75 * this.unitScale;
+
     this.rectangleWidth = 125;
     this.rectangleHeight = 75;
 
@@ -15,6 +17,7 @@ class Canvas {
     this.lineSource = null;
     this.lineTarget = null;
 
+    this.currentMode = null; // 'create' || 'edit'
     this.selectedNode = null;
   }
 
@@ -118,8 +121,12 @@ class Canvas {
     });
 
     this.canvas.on('mouse:dblclick', (options) => {
-      console.log(options.target);
+      // Reset selected node so Vue register change when for example
+      // user is clicking same node second time
+      this.selectedNode = null;
+
       this.selectedNode = options.target;
+      this.currentMode = 'edit';
     });
 
     this.canvas.on('mouse:up', (options) => {
@@ -135,11 +142,11 @@ class Canvas {
   }
 
   // Search for a canvas object by its identifier
-  getItem(type, id) {
+  getItem(type, property, id) {
     let object = null;
     const objects = this.canvas.getObjects(type);
-    for (let i = 0, len = this.canvas.size(); i < len; i++) {
-      if (objects[i].id && objects[i].id === id) {
+    for (let i = 0, len = objects.length; i < len; i++) {
+      if (objects[i][property] && objects[i][property] === id) {
         object = objects[i];
         break;
       }
@@ -157,7 +164,7 @@ class Canvas {
 
   movePlaceholderRect(options) {
     if (this.isAddingRect) {
-      const placeholder = this.getItem('group', 'placeholder');
+      const placeholder = this.getItem('group', 'id', 'placeholder');
       placeholder.left = Math.round((options.absolutePointer.x - placeholder.width / 2) / this.grid) * this.grid;
       placeholder.top = Math.round((options.absolutePointer.y - placeholder.height / 2) / this.grid) * this.grid;
       placeholder.setCoords();
@@ -165,22 +172,31 @@ class Canvas {
     }
   }
 
+  setNodeID(rectangleID) {
+    console.log(rectangleID);
+    const rect = this.getItem('group', 'id', this.selectedNode.id);
+    console.log(rect);
+    rect.id = rectangleID;
+    rect.getObjects()[1].set('text', rect.id);
+    this.canvas.renderAll();
+  }
+
   // When you create a selection for multiple objects, disable object group controls
   disableSelectionControls = (options) => {
     options.target.set({
       hasControls: false,
     });
-  }
+  };
 
   // Handle the placement of a new object on the grid
   placeObjectOnGrid() {
     if (this.isAddingRect) {
-      const placeholder = this.getItem('group', 'placeholder');
+      const placeholder = this.getItem('group', 'id', 'placeholder');
 
       // Change the properties and text of the object and force a new rendering
       const nodeCount = Array.from(this.canvas.getObjects('group')).length;
       placeholder.id = `node-${nodeCount}`;
-      console.log(placeholder);
+      placeholder.internal_id = `node-${nodeCount}`;
       placeholder.getObjects()[1].set('text', `node-${nodeCount}`);
       this.canvas.renderAll();
 
@@ -189,47 +205,23 @@ class Canvas {
       if (collisionObject.collision && placeholder.type === 'group') {
         this.moveIntersectedObject(placeholder, collisionObject.collider);
       }
+      this.selectedNode = placeholder;
+      this.currentMode = 'create';
     }
     this.isAddingRect = false;
   }
 
   // Create a new group consisting of a rectangle and text with its identifier
   createRect(left, top, fill, id) {
-    const rectangle = new fabric.Rect({
-      left,
-      top,
-      width: this.rectangleWidth,
-      height: this.rectangleHeight,
-      rx: 15,
-      ry: 15,
-      fill,
-      originX: 'left',
-      originY: 'top',
-    });
-    const text = new fabric.Textbox(`${id}`, {
-      left: left + this.rectangleWidth / 2,
-      textAlign: 'center',
-      splitByGrapheme: true,
-      width: this.rectangleWidth - 10,
-      originX: 'center',
-      originY: 'center',
-      top: top + this.rectangleHeight / 2,
-      fontSize: 15,
-      fontFamily: 'Calibri',
-      fill: '#000',
-    });
-    const group = new fabric.Group([rectangle, text], {
-      left,
-      top,
-      id,
-      hasControls: false,
-      hasBorders: false,
-    });
-    this.canvas.add(group);
+    const node = new Node(left, top, this.rectangleWidth, this.rectangleHeight, fill, id);
+    this.canvas.add(node);
   }
 
   moveIntersectedObject(target, collider) {
-    const originalCoordinates = { x: collider.left, y: collider.top };
+    const originalCoordinates = {
+      x: collider.left,
+      y: collider.top,
+    };
     const directions = ['right', 'right-bottom', 'bottom', 'bottom-left', 'left', 'left-top', 'top', 'top-right'];
     let rectangleOffset = 1;
     let foundFlag = false;
@@ -345,8 +337,26 @@ class Canvas {
       hoverCursor: 'default',
     });
     this.canvas.add(line);
-    console.log(line);
     line.moveTo(2);
+  }
+
+  removeNode(nodeId) {
+    const node = this.getItem('group', 'internal_id', nodeId);
+    this.canvas.remove(node);
+    this.canvas.renderAll();
+  }
+
+  createConnections(connections) {
+    // Delete all connections before creation (may by optimized with searching, not removing)
+    this.canvas.getObjects('connectionLine').forEach((line) => {
+      this.canvas.remove(line);
+    });
+    // Create connections
+    connections.forEach((connection) => {
+      this.lineSource = this.getItem('group', 'id', connection.source);
+      this.lineTarget = this.getItem('group', 'id', connection.target);
+      this.createLine();
+    });
   }
 
   selectObjectsForConnection(target) {

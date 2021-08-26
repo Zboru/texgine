@@ -14,7 +14,7 @@
     <template #default>
       <t-text-field label="ID" v-model="choice.id"></t-text-field>
       <t-text-area label="Text" v-model="choice.text"></t-text-area>
-      <t-autocomplete @select="selectStep" label="Link to step" placeholder="step-1" display="id" :items="steps" search-by="id"></t-autocomplete>
+      <t-autocomplete :value="choice.linkTo" @select="selectStep" label="Link to step" placeholder="step-1" display="id" :items="steps" search-by="id"></t-autocomplete>
     </template>
   </t-accordion>
 </template>

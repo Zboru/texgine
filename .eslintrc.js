@@ -18,5 +18,7 @@ module.exports = {
     "no-plusplus": "off",
     "no-continue": "off",
     "no-param-reassign": "off",
+    "prefer-destructuring": "off",
+    "class-methods-use-this": "off",
   },
 };

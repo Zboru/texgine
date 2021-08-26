@@ -42,6 +42,7 @@ export default {
     items: Array,
     searchBy: String,
     display: String,
+    value: [String, Object],
   },
   data() {
     return {
@@ -50,6 +51,15 @@ export default {
       listPosition: 0,
       autocompleteInput: false,
     };
+  },
+  created() {
+    if (this.value !== null) {
+      if (typeof this.value === 'string') {
+        this.search = this.value;
+      } else if (typeof this.value === 'object') {
+        this.search = this.value[this.display];
+      }
+    }
   },
   computed: {
     filteredItems() {
