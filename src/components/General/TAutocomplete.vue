@@ -55,7 +55,7 @@ export default {
     filteredItems() {
       if (this.items && this.items.length && this.search !== '' && this.search !== null) {
         return this.items.filter((i) => {
-          const regexp = new RegExp(this.search, 'g');
+          const regexp = new RegExp(this.search, 'gi');
           return regexp.test(i[this.searchBy]);
         });
       }
