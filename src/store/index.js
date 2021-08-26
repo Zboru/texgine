@@ -6,6 +6,8 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     steps: [],
+    selectedStep: null,
+    selectedStepIndex: null,
     canvas: null,
   },
   getters: {

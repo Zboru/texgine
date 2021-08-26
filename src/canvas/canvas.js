@@ -1,4 +1,5 @@
 import { fabric } from 'fabric';
+import Vue from 'vue';
 import Node from './node';
 
 class Canvas {
@@ -16,6 +17,8 @@ class Canvas {
 
     this.lineSource = null;
     this.lineTarget = null;
+
+    this.vue = new Vue();
 
     this.currentMode = null; // 'create' || 'edit'
     this.selectedNode = null;
@@ -121,12 +124,7 @@ class Canvas {
     });
 
     this.canvas.on('mouse:dblclick', (options) => {
-      // Reset selected node so Vue register change when for example
-      // user is clicking same node second time
-      this.selectedNode = null;
-
-      this.selectedNode = options.target;
-      this.currentMode = 'edit';
+      this.selectNode(options);
     });
 
     this.canvas.on('mouse:up', (options) => {
@@ -159,6 +157,18 @@ class Canvas {
     const collisionObject = this.checkCollision(options.target);
     if (collisionObject.collision && options.target.type === 'group') {
       this.moveIntersectedObject(options.target, collisionObject.collider);
+    }
+  }
+
+  // Select desired node by double-clicking it
+  selectNode(options) {
+    if (options.target.type === 'group') {
+      // Reset selected node to null so Vue register change when for example
+      // user is clicking same node second time
+      this.selectedNode = null;
+      this.selectedNode = options.target;
+      this.currentMode = 'edit';
+      this.vue.$emit('test');
     }
   }
 

@@ -62,6 +62,7 @@ export default {
           this.game.selectedStep = this.game.steps[stepIndex];
         } else if (this.currentMode === 'edit') {
           const stepIndex = this.game.steps.findIndex((s) => s.id === this.selectedNode.id);
+          this.$store.state.selectedStepIndex = stepIndex;
           this.game.selectedStep = { ...this.game.steps[stepIndex] };
         }
         this.dialogs.step_details = true;
@@ -80,6 +81,10 @@ export default {
     this.canvas.init();
     // Save canvas object to store to use its functions everywhere
     this.$store.state.canvas = this.canvas;
+
+    this.$root.$on('test', () => {
+      console.log('test');
+    });
   },
   methods: {
     createRectangle() {
