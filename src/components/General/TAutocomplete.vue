@@ -10,7 +10,7 @@
     </text-field>
     <div v-if="showList && filteredItems.length"
          class="autocomplete-list max-h-36 overflow-y-scroll absolute w-full shadow rounded no-scrollbar w-100">
-      <div @mousedown.prevent="selectItem" class="border p-2 hover:bg-gray-300 cursor-pointer"
+      <div @mousedown.prevent="selectItem(item)" class="border p-2 hover:bg-gray-300 cursor-pointer"
            :class="{'bg-gray-300 active-list-item': listPosition === index, 'bg-white': listPosition !== index}"
            v-for="(item, index) in filteredItems"
            :key="index">{{ item[display] }}
@@ -104,6 +104,7 @@ export default {
       }
     },
     selectItem(item) {
+      console.log(item);
       this.$emit('select', item);
       this.search = item[this.display];
       this.showList = false;
