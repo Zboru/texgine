@@ -48,8 +48,8 @@ export default {
   },
   methods: {
     saveStep() {
-      console.log('test');
-      this.steps.push(this.step);
+      this.$store.commit('addStep', this.step);
+      this.show = false;
     },
   },
 };
