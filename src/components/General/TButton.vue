@@ -10,6 +10,7 @@ export default {
   props: {
     variant: String,
     disabled: Boolean,
+    block: Boolean,
   },
   data() {
     return {
@@ -18,6 +19,7 @@ export default {
         success: this.variant === 'success',
         danger: this.variant === 'danger',
         disabled: this.disabled === true,
+        'block flex-1': this.block === true,
       },
     };
   },
