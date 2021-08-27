@@ -15,6 +15,18 @@
           </svg>
           <span class="ml-2">Reset zoom</span>
         </button>
+        <button @click="saveGame" class="border rounded py-1 px-2 mx-2 flex" id="save">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+          </svg>
+          <span class="ml-2">Save</span>
+        </button>
+        <button @click="loadCanvas" class="border rounded py-1 px-2 mx-2 flex" id="load">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+          </svg>
+          <span class="ml-2">Load</span>
+        </button>
       </div>
     </div>
     <portal to="dialog">
@@ -42,33 +54,6 @@ export default {
       },
     };
   },
-  watch: {
-    selectedNode(value) {
-      if (value !== null && value.type === 'group') {
-        if (this.currentMode === 'create') {
-          // Create new step object
-          const step = {
-            id: value.id,
-            internal_id: value.id,
-            imageURL: null,
-            description: null,
-            choices: [],
-          };
-          // Save it in Vuex store
-          this.$store.commit('addStep', step);
-
-          // Select created step
-          const stepIndex = this.game.steps.indexOf(step);
-          this.game.selectedStep = this.game.steps[stepIndex];
-        } else if (this.currentMode === 'edit') {
-          const stepIndex = this.game.steps.findIndex((s) => s.id === this.selectedNode.id);
-          this.$store.state.selectedStepIndex = stepIndex;
-          this.game.selectedStep = { ...this.game.steps[stepIndex] };
-        }
-        this.dialogs.step_details = true;
-      }
-    },
-  },
   computed: {
     selectedNode() {
       return this.canvas.selectedNode;
@@ -81,12 +66,37 @@ export default {
     this.canvas.init();
     // Save canvas object to store to use its functions everywhere
     this.$store.state.canvas = this.canvas;
-
-    this.$root.$on('test', () => {
-      console.log('test');
-    });
+    this.registerListeners();
   },
   methods: {
+    registerListeners() {
+      // Show dialog after double-clicking node
+      this.canvas.vue.$on('editNode', (node) => {
+        const stepIndex = this.game.steps.findIndex((s) => s.id === node.id);
+        this.$store.state.selectedStepIndex = stepIndex;
+        this.game.selectedStep = { ...this.game.steps[stepIndex] };
+        this.dialogs.step_details = true;
+      });
+      // Show dialog after placing new node
+      this.canvas.vue.$on('createNode', (node) => {
+        // Create new step object
+        const step = {
+          id: node.id,
+          internal_id: node.id,
+          imageURL: null,
+          description: null,
+          choices: [],
+        };
+        // Save it in Vuex store
+        this.$store.commit('addStep', step);
+
+        // Select created step
+        const stepIndex = this.game.steps.indexOf(step);
+        this.game.selectedStep = { ...this.game.steps[stepIndex] };
+
+        this.dialogs.step_details = true;
+      });
+    },
     createRectangle() {
       this.canvas.createRect(9999, 9999, '#faf', 'placeholder');
       this.canvas.isAddingRect = true;
@@ -119,6 +129,25 @@ export default {
     },
     resetZoom() {
       this.canvas.resetZoom();
+    },
+    saveGame() {
+      const canvasJSON = JSON.stringify(this.canvas.canvas.toJSON());
+      const gameJSON = JSON.stringify(this.game);
+      localStorage.setItem('canvas', canvasJSON);
+      localStorage.setItem('game', gameJSON);
+      console.log(canvasJSON, gameJSON);
+    },
+    loadCanvas() {
+      // parse the data into the canvas
+      const json = localStorage.getItem('canvas');
+      const game = localStorage.getItem('game');
+      this.game = game;
+      this.canvas.canvas.loadFromJSON(json);
+
+      // re-render the canvas
+      this.canvas.canvas.renderAll();
+
+      // optional
     },
   },
 };

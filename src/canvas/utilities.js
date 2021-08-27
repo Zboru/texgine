@@ -1,1 +1,0 @@
-const { fabric } = require('fabric');

@@ -19,7 +19,7 @@ export default new Vuex.Store({
       state.steps.push(payload);
     },
     saveStep: (state, payload) => {
-      const stepIndex = state.steps.findIndex((st) => st.id === payload.id);
+      const stepIndex = state.steps.findIndex((st) => st.internal_id === payload.internal_id);
       state.steps[stepIndex] = payload;
     },
     removeStep: (state, payload) => {

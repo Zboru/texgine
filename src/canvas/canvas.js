@@ -13,7 +13,6 @@ class Canvas {
     this.rectangleHeight = 75;
 
     this.isAddingRect = false;
-    this.isAddingLine = false;
 
     this.lineSource = null;
     this.lineTarget = null;
@@ -42,13 +41,15 @@ class Canvas {
   createGrid() {
     for (let i = 0; i < (this.canvasWidth / this.grid); i++) {
       this.canvas.add(new fabric.Line([i * this.grid, 0, i * this.grid, this.canvasHeight], {
-        type: 'gridLine',
+        type: 'line',
+        category: 'gridLine',
         stroke: '#b5b5b5',
         selectable: false,
         hoverCursor: 'default',
       }));
       this.canvas.add(new fabric.Line([0, i * this.grid, this.canvasWidth, i * this.grid], {
-        type: 'gridLine',
+        type: 'line',
+        category: 'gridLine',
         stroke: '#b5b5b5',
         selectable: false,
         hoverCursor: 'default',
@@ -126,10 +127,6 @@ class Canvas {
     this.canvas.on('mouse:dblclick', (options) => {
       this.selectNode(options);
     });
-
-    this.canvas.on('mouse:up', (options) => {
-      this.selectObjectsForConnection(options.target);
-    });
   }
 
   moveObject(options) {
@@ -163,12 +160,9 @@ class Canvas {
   // Select desired node by double-clicking it
   selectNode(options) {
     if (options.target.type === 'group') {
-      // Reset selected node to null so Vue register change when for example
-      // user is clicking same node second time
-      this.selectedNode = null;
       this.selectedNode = options.target;
       this.currentMode = 'edit';
-      this.vue.$emit('test');
+      this.vue.$emit('editNode', this.selectedNode);
     }
   }
 
@@ -217,6 +211,7 @@ class Canvas {
       }
       this.selectedNode = placeholder;
       this.currentMode = 'create';
+      this.vue.$emit('createNode', this.selectedNode);
     }
     this.isAddingRect = false;
   }
@@ -306,14 +301,17 @@ class Canvas {
   }
 
   resetZoom() {
-    this.canvas.zoomToPoint({
-      x: 0,
-      y: 0,
+    const canvas = this.canvas;
+    const zoom = canvas.getZoom();
+    const x = fabric.util.invertTransform(this.canvas.viewportTransform)[4] + (canvas.width / zoom) / 2;
+    const y = fabric.util.invertTransform(this.canvas.viewportTransform)[5] + (canvas.height / zoom) / 2;
+    canvas.zoomToPoint({
+      x, y,
     }, 1);
   }
 
   updateLines() {
-    const objects = this.canvas.getObjects('connectionLine');
+    const objects = this.getCategoryObjects('line', 'connectionLine');
     for (let i = 0; i < objects.length; i++) {
       const line = objects[i];
       const linePoints = line.calcLinePoints();
@@ -323,6 +321,12 @@ class Canvas {
       linePoints.y2 = line.target.top + (this.rectangleHeight / 2);
       line.set(linePoints);
     }
+  }
+
+  // Get canvas objects with specific type and category
+  getCategoryObjects(type, category) {
+    return this.canvas.getObjects(type)
+      .filter((object) => object.category === category);
   }
 
   getRectConnection(rectangle) {
@@ -337,8 +341,9 @@ class Canvas {
       this.getRectConnection(this.lineSource),
       this.getRectConnection(this.lineTarget),
     ].flat(), {
-      type: 'connectionLine',
-      stroke: 'red',
+      type: 'line',
+      category: 'connectionLine',
+      stroke: 'black',
       source: this.lineSource,
       target: this.lineTarget,
       hasControls: false,
@@ -357,32 +362,18 @@ class Canvas {
   }
 
   createConnections(connections) {
-    // Delete all connections before creation (may by optimized with searching, not removing)
-    this.canvas.getObjects('connectionLine').forEach((line) => {
-      this.canvas.remove(line);
-    });
+    // Delete all connections before creation
+    // (may by optimized with searching existing ones and skipping them, not removing)
+    this.getCategoryObjects('line', 'connectionLine')
+      .forEach((line) => {
+        this.canvas.remove(line);
+      });
     // Create connections
     connections.forEach((connection) => {
       this.lineSource = this.getItem('group', 'id', connection.source);
       this.lineTarget = this.getItem('group', 'id', connection.target);
       this.createLine();
     });
-  }
-
-  selectObjectsForConnection(target) {
-    if (this.isAddingLine && target && target.type === 'group') {
-      if (this.lineSource === null) {
-        this.lineSource = target;
-        return;
-      }
-      if (this.lineTarget === null && this.lineSource !== null) {
-        this.lineTarget = target;
-        this.createLine();
-        this.lineSource = null;
-        this.lineTarget = null;
-        this.isAddingLine = false;
-      }
-    }
   }
 }
 
