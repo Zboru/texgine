@@ -2,6 +2,7 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Dashboard from '../views/Dashboard.vue';
 import CreateNewGame from '../views/CreateNewGame.vue';
+import Browse from '../views/Browse.vue';
 
 Vue.use(VueRouter);
 
@@ -10,6 +11,11 @@ const routes = [
     path: '/',
     name: 'Dashboard',
     component: Dashboard,
+  },
+  {
+    path: '/browse',
+    name: 'Browse',
+    component: Browse,
   },
   {
     path: '/create',

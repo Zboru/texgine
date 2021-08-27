@@ -25,7 +25,7 @@
           <div class="hidden sm:block sm:ml-6">
             <div class="flex space-x-4 navbar-links">
               <router-link to="/" class="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium" aria-current="page">Dashboard</router-link>
-              <router-link to="/test"
+              <router-link to="/browse"
                  class="text-gray-500 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Browse</router-link>
               <router-link to="/create"
                  class="text-gray-500 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">My
