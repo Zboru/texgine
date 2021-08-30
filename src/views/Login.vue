@@ -47,11 +47,15 @@
           <hr>
         </div>
         <div class="grid grid-cols-3 mt-4">
-          <div class="border rounded mx-4 text-center">
-            fb
+          <div class="border rounded mx-4 flex justify-center items-center py-2 cursor-pointer hover:bg-gray-300">
+            <facebook-icon class="w-6 h-6 rounded"></facebook-icon>
           </div>
-          <div class="border rounded mx-4 text-center">google</div>
-          <div class="border rounded mx-4 text-center">github</div>
+          <div class="border rounded mx-4 flex justify-center items-center py-2 cursor-pointer hover:bg-gray-300">
+            <google-icon class="w-6 h-6"></google-icon>
+          </div>
+          <div class="border rounded mx-4 flex justify-center items-center py-2 cursor-pointer hover:bg-gray-300">
+            <github-icon class="w-6 h-6"></github-icon>
+          </div>
         </div>
       </div>
     </div>
@@ -61,10 +65,19 @@
 <script>
 import firebase from 'firebase';
 import TTextField from '../components/General/TTextField.vue';
+import GithubIcon from '../components/Icons/GithubIcon.vue';
+import FacebookIcon from '../components/Icons/FacebookIcon.vue';
+import GoogleIcon from '../components/Icons/GoogleIcon.vue';
+import { db } from '../db';
 
 export default {
   name: 'Login',
-  components: { TTextField },
+  components: {
+    GoogleIcon,
+    FacebookIcon,
+    GithubIcon,
+    TTextField,
+  },
   data() {
     return {
       form: {
@@ -80,8 +93,10 @@ export default {
         .signInWithEmailAndPassword(this.form.email, this.form.password)
         .then((data) => {
           console.log(data);
-          this.$store.commit('setUserData', data);
-          this.$router.replace({ name: 'Dashboard' });
+          db.collection('users').doc(data.user.uid).get().then((doc) => {
+            this.$store.commit('setUserData', doc.data());
+            this.$router.replace({ name: 'Dashboard' });
+          });
         })
         .catch((err) => {
           console.log(err);

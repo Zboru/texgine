@@ -9,12 +9,17 @@ export default new Vuex.Store({
     selectedStep: null,
     selectedStepIndex: null,
     canvas: null,
+    user: {},
   },
   getters: {
+    getUser: (state) => state.user,
     getSteps: (state) => state.steps,
     getCanvas: (state) => state.canvas,
   },
   mutations: {
+    setUserData: (state, payload) => {
+      state.user = { ...payload };
+    },
     addStep: (state, payload) => {
       state.steps.push(payload);
     },
@@ -27,6 +32,4 @@ export default new Vuex.Store({
       state.steps.splice(stepIndex, 1);
     },
   },
-  actions: {},
-  modules: {},
 });
