@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <navigation />
+    <navigation v-if="!$route.meta.plainLayout" />
     <router-view/>
     <portal-target class="dialog-portal" name="dialog" multiple></portal-target>
   </div>
