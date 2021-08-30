@@ -4,11 +4,29 @@ import firebase from 'firebase';
 import Dashboard from '../views/Dashboard.vue';
 import CreateNewGame from '../views/CreateNewGame.vue';
 import Browse from '../views/Browse.vue';
-import Auth from '../views/Auth.vue';
+import Login from '../views/Login.vue';
+import NotFound from '../views/NotFound.vue';
+import Register from '../views/Register.vue';
 
 Vue.use(VueRouter);
 
 const routes = [
+  {
+    path: '/login',
+    name: 'Login',
+    component: Login,
+    meta: {
+      plainLayout: true,
+    },
+  },
+  {
+    path: '/register',
+    name: 'Register',
+    component: Register,
+    meta: {
+      plainLayout: true,
+    },
+  },
   {
     path: '/',
     name: 'Dashboard',
@@ -34,9 +52,8 @@ const routes = [
     },
   },
   {
-    path: '/login',
-    name: 'Login',
-    component: Auth,
+    path: '*',
+    component: NotFound,
     meta: {
       plainLayout: true,
     },
@@ -44,7 +61,7 @@ const routes = [
 ];
 
 const router = new VueRouter({
-  mode: 'hash',
+  mode: 'history',
   base: process.env.BASE_URL,
   routes,
 });
@@ -52,7 +69,7 @@ const router = new VueRouter({
 router.beforeEach(async (to, from, next) => {
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
   if (requiresAuth && !await firebase.getCurrentUser()) {
-    next('Login');
+    next('login');
   } else {
     next();
   }
