@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import PortalVue from 'portal-vue';
+import { firestorePlugin } from 'vuefire';
 
 import router from './router';
 import store from './store';
@@ -10,6 +11,7 @@ import './assets/styles.css';
 import App from './App.vue';
 
 Vue.use(PortalVue);
+Vue.use(firestorePlugin);
 
 Vue.config.productionTip = false;
 
