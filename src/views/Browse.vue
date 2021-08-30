@@ -24,13 +24,11 @@
 </template>
 
 <script>
-import firebase from 'firebase';
 import TContainer from '../components/General/TContainer.vue';
 import TSelect from '../components/General/TSelect.vue';
 import TTextField from '../components/General/TTextField.vue';
 import GameBar from '../components/Browse/GameBar.vue';
 import GameDetails from '../components/Browse/GameDetails.vue';
-import { db } from '../db';
 
 export default {
   name: 'Browse',
@@ -51,14 +49,6 @@ export default {
         { text: 'Best rated', value: 'best_rated' },
       ],
     };
-  },
-  created() {
-    firebase.auth().createUserWithEmailAndPassword('zboru99@gmail.com', 'qwerty123').then((response) => {
-      console.log('created', response);
-    });
-  },
-  firestore: {
-    docs: db.collection('documents'),
   },
 };
 </script>
