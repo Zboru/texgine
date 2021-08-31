@@ -2,14 +2,17 @@ import TButton from '../components/General/TButton.vue';
 import '../assets/tailwind.css';
 
 export default {
-  title: 'TButton',
+  title: 'General/TButton',
   component: TButton,
+  argTypes: {
+    variant: { control: { type: 'select', options: ['null', 'success', 'primary', 'danger'] } },
+  },
 };
 
 const Template = (args, { argTypes }) => ({
-  components: { TButton },
   props: Object.keys(argTypes),
-  template: '<t-button v-bind="$props">Test</t-button>',
+  components: { TButton },
+  template: '<t-button @onClick="onClick" v-bind="$props">Test</t-button>',
 });
 
 export const Primary = Template.bind({});

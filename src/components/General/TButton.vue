@@ -1,5 +1,5 @@
 <template>
-  <button @click="$emit('click')" class="t-button" :disabled="disabled" :class="buttonClasses">
+  <button @click="onClick" class="t-button" :disabled="disabled" :class="buttonClasses">
     <t-icon class="mr-2" :icon="icon"></t-icon>
     <slot></slot>
   </button>
@@ -12,10 +12,22 @@ export default {
   name: 'TButton',
   components: { TIcon },
   props: {
-    variant: String,
-    disabled: Boolean,
-    block: Boolean,
-    icon: String,
+    variant: {
+      type: String,
+      default: '',
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
+    block: {
+      type: Boolean,
+      default: false,
+    },
+    icon: {
+      type: String,
+      default: '',
+    },
   },
   data() {
     return {
@@ -24,9 +36,14 @@ export default {
         success: this.variant === 'success',
         danger: this.variant === 'danger',
         disabled: this.disabled === true,
-        'block flex-1': this.block === true,
+        'block w-full': this.block === true,
       },
     };
+  },
+  methods: {
+    onClick() {
+      this.$emit('onClick');
+    },
   },
 };
 </script>
@@ -72,6 +89,7 @@ export default {
 .t-button.disabled {
   border-color: #CDCDCD;
   color: #CDCDCD;
+  background: white;
   cursor: not-allowed;
 }
 </style>
