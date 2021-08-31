@@ -1,6 +1,6 @@
 <template>
   <button @click="onClick" class="t-button" :disabled="disabled" :class="buttonClasses">
-    <t-icon class="mr-2" :icon="icon"></t-icon>
+    <t-icon class="mr-2" v-if="icon" :icon="icon"></t-icon>
     <slot></slot>
   </button>
 </template>
@@ -52,9 +52,11 @@ export default {
 .t-button {
   font-family: 'Rubik', sans-serif;
   border: 2px solid black;
+  display: flex;
+  justify-content: center;
   border-radius: 3px;
-  padding: 3px 30px 3px 20px;
-  @apply flex focus:ring-1 focus:ring-gray-600
+  /*padding: 5px 20px 5px 20px;*/
+  @apply flex focus:ring-1 focus:ring-gray-600 py-1.5 px-8
 }
 
 .t-button.primary {

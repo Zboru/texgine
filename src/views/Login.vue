@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+  <div class="min-h-screen flex items-center justify-center bg-gray-200 py-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-md w-full space-y-8">
       <div>
         <img class="mx-auto h-12 w-auto" src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg"
@@ -9,7 +9,7 @@
         </h2>
         <p class="mt-2 text-center text-sm text-gray-600">
           Or
-          <router-link to="/register" class="font-medium text-indigo-600 hover:text-indigo-500">
+          <router-link to="/register" class="font-medium text-green-600 hover:text-green-500">
             create new one here
           </router-link>
         </p>
@@ -26,53 +26,56 @@
             </label>
           </div>
           <div class="text-sm">
-            <a href="#" class="font-medium select-none text-indigo-600 hover:text-indigo-500">
+            <a href="#" class="font-medium select-none text-green-600 hover:text-green-500">
               Forgot your password?
             </a>
           </div>
         </div>
-        <button type="submit" @click="submit"
-                class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-            <span class="absolute left-0 inset-y-0 flex items-center pl-3">
-              <svg xmlns="http://www.w3.org/2000/svg"
-                   class="h-6 w-6 h-5 w-5 text-indigo-500 group-hover:text-indigo-400" fill="none" viewBox="0 0 24 24"
-                   stroke="currentColor">
-  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-</svg>
-            </span>
-          Sign in
-        </button>
-        <div class="relative mt-4">
-          <hr>
-        </div>
+        <t-button class="mb-3" @onClick="submit" variant="success" icon="lock-closed">Sign in</t-button>
+        <t-divider class="my-3">Or continue with</t-divider>
         <div class="grid grid-cols-3 mt-4">
-          <div class="border rounded mx-4 flex justify-center items-center py-2 cursor-pointer hover:bg-gray-300">
+          <div class="border rounded-md mr-2 flex justify-center items-center py-2 cursor-pointer hover:bg-gray-300">
             <facebook-icon class="w-6 h-6 rounded"></facebook-icon>
           </div>
-          <div class="border rounded mx-4 flex justify-center items-center py-2 cursor-pointer hover:bg-gray-300">
+          <div class="border rounded-md mx-2 flex justify-center items-center py-2 cursor-pointer hover:bg-gray-300">
             <google-icon class="w-6 h-6"></google-icon>
           </div>
-          <div class="border rounded mx-4 flex justify-center items-center py-2 cursor-pointer hover:bg-gray-300">
+          <div class="border rounded-md ml-2 flex justify-center items-center py-2 cursor-pointer hover:bg-gray-300">
             <github-icon class="w-6 h-6"></github-icon>
           </div>
         </div>
       </div>
     </div>
+    <portal to="alert">
+      <t-alert v-model="alert.error" variant="danger" class="max-w-md">
+        <template #title>Oops! Something went wrong.</template>
+        <template #text>{{ alert.errorText }}</template>
+      </t-alert>
+      <t-alert v-model="alert.success" variant="success" class="max-w-md">
+        <template #title>Login successful</template>
+        <template #text>You will be taken to the dashboard in a moment</template>
+      </t-alert>
+    </portal>
   </div>
 </template>
 
 <script>
 import firebase from 'firebase';
 import TTextField from '../components/General/TTextField.vue';
+import TAlert from '../components/General/TAlert.vue';
 import GithubIcon from '../components/Icons/GithubIcon.vue';
 import FacebookIcon from '../components/Icons/FacebookIcon.vue';
 import GoogleIcon from '../components/Icons/GoogleIcon.vue';
 import { db } from '../db';
+import TButton from '../components/General/TButton.vue';
+import TDivider from '../components/General/TDivider.vue';
 
 export default {
   name: 'Login',
   components: {
+    TDivider,
+    TButton,
+    TAlert,
     GoogleIcon,
     FacebookIcon,
     GithubIcon,
@@ -81,8 +84,14 @@ export default {
   data() {
     return {
       form: {
-        email: null,
-        password: null,
+        email: 'zboru99@gmail.com',
+        password: 'qwertyy123',
+      },
+      alert: {
+        success: false,
+        error: false,
+        title: null,
+        text: null,
       },
     };
   },
@@ -92,15 +101,20 @@ export default {
         .auth()
         .signInWithEmailAndPassword(this.form.email, this.form.password)
         .then((data) => {
-          console.log(data);
-          db.collection('users').doc(data.user.uid).get().then((doc) => {
-            this.$store.commit('setUserData', doc.data());
-            this.$router.replace({ name: 'Dashboard' });
-          });
+          this.alert.success = true;
+          db.collection('users')
+            .doc(data.user.uid)
+            .get()
+            .then((doc) => {
+              this.$store.commit('setUserData', doc.data());
+              setTimeout(() => {
+                this.$router.replace({ name: 'Dashboard' });
+              }, 2500);
+            });
         })
         .catch((err) => {
-          console.log(err);
-          this.error = err.message;
+          this.alert.error = true;
+          this.alert.errorText = err.message;
         });
     },
   },

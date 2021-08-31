@@ -1,15 +1,17 @@
 <template>
-  <div :class="{...backgroundColors, ...border, ...borderColors}" class="flex p-4 rounded">
-    <t-icon :color="iconColors" :icon="icon"></t-icon>
-    <div class="ml-3">
-      <span class="font-semibold" :class="titleColor">
-        <slot name="title">Title</slot>
-      </span>
-      <p class="mt-1" :class="textColor">
-        <slot name="text">Text</slot>
-      </p>
+  <transition name="fade">
+    <div v-show="show" :class="{...backgroundColors, ...border, ...borderColors}" class="flex p-4 rounded-md">
+      <t-icon :color="iconColors" :icon="icon"></t-icon>
+      <div class="ml-3">
+        <p class="font-semibold" :class="titleColor">
+          <slot name="title">Title</slot>
+        </p>
+        <p class="mt-1" :class="textColor">
+          <slot name="text">Text</slot>
+        </p>
+      </div>
     </div>
-  </div>
+  </transition>
 </template>
 
 <script>
@@ -19,6 +21,10 @@ export default {
   name: 'TAlert',
   components: { TIcon },
   props: {
+    value: {
+      type: Boolean,
+      default: false,
+    },
     variant: {
       type: String,
       default: '',
@@ -28,7 +34,24 @@ export default {
       default: false,
     },
   },
+  watch: {
+    show(val) {
+      if (val) {
+        setTimeout(() => {
+          this.show = false;
+        }, 3500);
+      }
+    },
+  },
   computed: {
+    show: {
+      get() {
+        return this.value;
+      },
+      set(value) {
+        this.$emit('input', value);
+      },
+    },
     icon() {
       switch (this.variant) {
         case 'warning':
