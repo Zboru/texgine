@@ -25,6 +25,12 @@ body {
     left: 0;
 }
 
+.alert-portal {
+    position: absolute;
+    right: 25px;
+    bottom: 25px;
+}
+
 .card {
     max-width: 600px;
     background: white;
@@ -46,4 +52,13 @@ body {
 .no-scrollbar {
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
+}
+
+/* Fade animation */
+.fade-enter-active, .fade-leave-active {
+    transition: all .25s;
+}
+.fade-enter, .fade-leave-to {
+    transform: translateX(10px);
+    opacity: 0;
 }
