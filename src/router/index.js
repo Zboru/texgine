@@ -7,6 +7,7 @@ import Browse from '../views/Browse.vue';
 import Login from '../views/Login.vue';
 import NotFound from '../views/NotFound.vue';
 import Register from '../views/Register.vue';
+import Profile from '../views/Profile.vue';
 
 Vue.use(VueRouter);
 
@@ -47,6 +48,14 @@ const routes = [
     path: '/create',
     name: 'CreateNewGame',
     component: CreateNewGame,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
+    path: '/profile',
+    name: 'Profile',
+    component: Profile,
     meta: {
       requiresAuth: true,
     },

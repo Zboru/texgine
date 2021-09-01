@@ -35,15 +35,16 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    async loadUserData({ state, commit }) {
+    loadUserData({ state, commit }) {
       if (state.user && Object.keys(state.user).length === 0 && state.user.constructor === Object) {
-        const userData = await firebase.getCurrentUser();
-        db.collection('users')
-          .doc(userData.uid)
-          .get()
-          .then((doc) => {
-            commit('setUserData', doc.data());
-          });
+        firebase.getCurrentUser().then((data) => {
+          db.collection('users')
+            .doc(data.uid)
+            .get()
+            .then((doc) => {
+              commit('setUserData', doc.data());
+            });
+        });
       }
     },
   },
