@@ -64,6 +64,12 @@ export default {
       listPosition: 0,
     };
   },
+  mounted() {
+    if (this.item && this.items) {
+      const itemIndex = this.items.findIndex((item) => item.value === this.item);
+      this.selectedItem = this.items[itemIndex];
+    }
+  },
   computed: {
     selectClasses() {
       return {
