@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
+    "start": "http-server dist/ -d false -g",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "storybook": "start-storybook -p 6006",
@@ -16,6 +17,7 @@
     "core-js": "^3.6.5",
     "fabric": "^4.5.1",
     "firebase": "7.24.0",
+    "http-server": "^13.0.1",
     "lodash": "^4.17.21",
     "portal-vue": "^2.1.7",
     "postcss": "7",

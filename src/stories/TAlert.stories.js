@@ -23,6 +23,7 @@ export const Bordered = Template.bind({});
 Warning.args = {
   variant: 'warning',
   borders: false,
+  value: true,
   title: 'Oops! Something went wrong.',
   text: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci atque, beatae est et explicabo incidunt',
 };
@@ -30,6 +31,7 @@ Warning.args = {
 Success.args = {
   variant: 'success',
   borders: false,
+  value: true,
   title: 'Everything is good!',
   text: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci atque, beatae est et explicabo incidunt',
 };
@@ -37,6 +39,7 @@ Success.args = {
 Danger.args = {
   variant: 'danger',
   borders: false,
+  value: true,
   title: 'Critical failure',
   text: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci atque, beatae est et explicabo incidunt',
 };
@@ -44,6 +47,7 @@ Danger.args = {
 Bordered.args = {
   variant: 'success',
   borders: true,
+  value: true,
   title: 'Everything is good!',
   text: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci atque, beatae est et explicabo incidunt',
 };
