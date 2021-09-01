@@ -2,8 +2,7 @@
   <div class="min-h-screen flex items-center justify-center bg-gray-200 py-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-md w-full space-y-8">
       <div>
-        <img class="mx-auto h-12 w-auto" src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg"
-             alt="Workflow"/>
+        <h1 class="text-4xl font-medium text-center">tex<span class="text-green-500">Gine</span></h1>
         <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
           Sign in to your account
         </h2>
@@ -31,16 +30,21 @@
             </a>
           </div>
         </div>
-        <t-button class="mb-3" @onClick="submit" variant="success" icon="lock-closed">Sign in</t-button>
+        <t-button class="mb-3" :disabled="loggingIn" :loading="loggingIn" @onClick="submit" variant="success"
+                  icon="lock-closed">Sign in
+        </t-button>
         <t-divider class="my-3">Or continue with</t-divider>
         <div class="grid grid-cols-3 mt-4">
-          <div class="border rounded-md mr-2 flex justify-center items-center py-2 cursor-pointer hover:bg-gray-300">
+          <div @click="fbLogin"
+               class="border rounded-md mr-2 flex justify-center items-center py-2 cursor-pointer hover:bg-gray-300">
             <facebook-icon class="w-6 h-6 rounded"></facebook-icon>
           </div>
-          <div class="border rounded-md mx-2 flex justify-center items-center py-2 cursor-pointer hover:bg-gray-300">
+          <div @click="googleLogin"
+               class="border rounded-md mx-2 flex justify-center items-center py-2 cursor-pointer hover:bg-gray-300">
             <google-icon class="w-6 h-6"></google-icon>
           </div>
-          <div class="border rounded-md ml-2 flex justify-center items-center py-2 cursor-pointer hover:bg-gray-300">
+          <div @click="githubLogin"
+               class="border rounded-md ml-2 flex justify-center items-center py-2 cursor-pointer hover:bg-gray-300">
             <github-icon class="w-6 h-6"></github-icon>
           </div>
         </div>
@@ -87,6 +91,7 @@ export default {
         email: 'zboru99@gmail.com',
         password: 'qwertyy123',
       },
+      loggingIn: false,
       alert: {
         success: false,
         error: false,
@@ -95,13 +100,66 @@ export default {
       },
     };
   },
+  async mounted() {
+    await this.userDataExists('pAwZzFArrYXIBdLCIjgprPRxJCm1');
+    await this.userDataExists('1');
+  },
   methods: {
+    async userDataExists(uid) {
+      const doc = await db.collection('users')
+        .doc(uid)
+        .get();
+      return doc.data() !== undefined;
+    },
+    login(provider) {
+      this.loggingIn = true;
+      firebase.auth()
+        .signInWithPopup(provider)
+        .then(async (data) => {
+          this.alert.success = true;
+          this.loggingIn = false;
+          const dataFlag = await this.userDataExists(data.user.uid);
+          if (dataFlag) {
+            db.collection('users')
+              .doc(data.user.uid)
+              .get()
+              .then((doc) => {
+                this.$store.commit('setUserData', doc.data());
+                setTimeout(() => {
+                  this.$router.replace({ name: 'Dashboard' });
+                }, 2500);
+              });
+          } else {
+            await db.collection('users')
+              .doc(data.user.uid)
+              .set({
+                uid: data.user.uid,
+                nick: `adventurer-${Math.floor(Math.random() * 9999)}`,
+                email: data.user.email,
+              });
+          }
+        }).catch((err) => {
+          this.alert.error = true;
+          this.alert.errorText = err.message;
+        });
+    },
+    githubLogin() {
+      this.login(new firebase.auth.GithubAuthProvider());
+    },
+    googleLogin() {
+      this.login(new firebase.auth.GoogleAuthProvider());
+    },
+    fbLogin() {
+      this.login(new firebase.auth.FacebookAuthProvider());
+    },
     submit() {
+      this.loggingIn = true;
       firebase
         .auth()
         .signInWithEmailAndPassword(this.form.email, this.form.password)
         .then((data) => {
           this.alert.success = true;
+          this.loggingIn = false;
           db.collection('users')
             .doc(data.user.uid)
             .get()

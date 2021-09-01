@@ -16,7 +16,7 @@
            :key="index">{{ item[itemText] }}
       </div>
     </div>
-    <div @mousedown.prevent="test" class="absolute w-full shadow rounded-b w-100"
+    <div @mousedown.prevent="doNothing" class="absolute w-full shadow rounded-b w-100"
          v-if="state && !items.length">
       <div class="border bg-white p-2 flex justify-center text-gray-300">
         <svg xmlns="http://www.w3.org/2000/svg" class="-ml-2 h-6 w-6" fill="none" viewBox="0 0 24 24"
@@ -24,7 +24,7 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/>
         </svg>
-        <span class="ml-2">No data</span>
+        <span class="ml-2 select-none">No data</span>
       </div>
     </div>
   </div>
@@ -88,8 +88,8 @@ export default {
     },
   },
   methods: {
-    test() {
-      console.log('test');
+    doNothing() {
+      return false;
     },
     selectItem(item) {
       document.querySelector('.t-select').blur();
