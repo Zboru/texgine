@@ -1,5 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import firebase from 'firebase';
+import { db } from '../db';
 
 Vue.use(Vuex);
 
@@ -30,6 +32,19 @@ export default new Vuex.Store({
     removeStep: (state, payload) => {
       const stepIndex = state.steps.findIndex((st) => st.id === payload.id);
       state.steps.splice(stepIndex, 1);
+    },
+  },
+  actions: {
+    async loadUserData({ state, commit }) {
+      if (state.user && Object.keys(state.user).length === 0 && state.user.constructor === Object) {
+        const userData = await firebase.getCurrentUser();
+        db.collection('users')
+          .doc(userData.uid)
+          .get()
+          .then((doc) => {
+            commit('setUserData', doc.data());
+          });
+      }
     },
   },
 });

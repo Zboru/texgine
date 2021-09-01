@@ -12,5 +12,8 @@ import Navigation from './components/Layout/Navigation.vue';
 
 export default {
   components: { Navigation },
+  beforeCreate() {
+    this.$store.dispatch('loadUserData');
+  },
 };
 </script>
