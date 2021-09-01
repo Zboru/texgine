@@ -20,6 +20,7 @@ export const Danger = Template.bind({});
 export const Disabled = Template.bind({});
 export const Block = Template.bind({});
 export const withIcon = Template.bind({});
+export const Loading = Template.bind({});
 
 Primary.args = {
   variant: 'success',
@@ -54,4 +55,12 @@ withIcon.args = {
   disabled: false,
   block: false,
   icon: 'star',
+};
+
+Loading.args = {
+  variant: 'success',
+  loading: true,
+  disabled: false,
+  block: false,
+  icon: '',
 };

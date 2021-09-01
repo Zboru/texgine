@@ -1,7 +1,12 @@
 <template>
   <button @click="onClick" class="t-button" :disabled="disabled" :class="buttonClasses">
-    <t-icon class="mr-2" v-if="icon" :icon="icon"></t-icon>
-    <slot></slot>
+    <template v-if="!loading">
+      <t-icon class="mr-2" v-if="icon" :icon="icon"></t-icon>
+      <slot></slot>
+    </template>
+    <template v-else>
+      <t-icon class="animate-spin" icon="cog"></t-icon>
+    </template>
   </button>
 </template>
 
@@ -27,6 +32,10 @@ export default {
     icon: {
       type: String,
       default: '',
+    },
+    loading: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
