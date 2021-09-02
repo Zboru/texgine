@@ -1,5 +1,4 @@
 import firebase from 'firebase/app';
-import 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyAVuPiv73Y-fqVtSbw4jehk4QfrH001-4Y',
@@ -21,6 +20,5 @@ firebase.getCurrentUser = () => new Promise((resolve, reject) => {
 
 // Get a Firestore instance
 // eslint-disable-next-line import/prefer-default-export
-export const db = firebase
-  .initializeApp(firebaseConfig)
-  .firestore();
+export const app = firebase
+  .initializeApp(firebaseConfig);

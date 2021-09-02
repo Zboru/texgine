@@ -5,7 +5,7 @@
       <slot></slot>
     </template>
     <template v-else>
-      <t-icon class="animate-spin" icon="cog"></t-icon>
+      <t-icon class="animate-spin-slow" icon="cog"></t-icon>
     </template>
   </button>
 </template>

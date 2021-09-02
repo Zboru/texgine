@@ -1,7 +1,7 @@
 <template>
   <transition name="fade">
     <div v-show="show" :class="{...backgroundColors, ...border, ...borderColors}" class="flex p-4 rounded-md">
-      <t-icon :color="iconColors" :icon="icon"></t-icon>
+      <t-icon :class="iconColors" :icon="icon"></t-icon>
       <div class="ml-3">
         <p class="font-semibold" :class="titleColor">
           <slot name="title">Title</slot>

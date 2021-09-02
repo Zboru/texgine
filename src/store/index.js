@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import firebase from 'firebase';
-import { db } from '../db';
+import { app } from '../db';
 
 Vue.use(Vuex);
 
@@ -20,6 +20,7 @@ export default new Vuex.Store({
   },
   mutations: {
     setUserData: (state, payload) => {
+      localStorage.setItem('uid', payload.uid);
       state.user = { ...payload };
     },
     addStep: (state, payload) => {
@@ -38,12 +39,14 @@ export default new Vuex.Store({
     loadUserData({ state, commit }) {
       if (state.user && Object.keys(state.user).length === 0 && state.user.constructor === Object) {
         firebase.getCurrentUser().then((data) => {
-          db.collection('users')
-            .doc(data.uid)
-            .get()
-            .then((doc) => {
-              commit('setUserData', doc.data());
-            });
+          if (data) {
+            app.firestore().collection('users')
+              .doc(data.uid)
+              .get()
+              .then((doc) => {
+                commit('setUserData', doc.data());
+              });
+          }
         });
       }
     },

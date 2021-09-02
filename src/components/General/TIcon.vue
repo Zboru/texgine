@@ -1,5 +1,5 @@
 <template>
-  <component :is="iconComponent" />
+  <component :class="color" :is="iconComponent" />
 </template>
 
 <script>
@@ -16,6 +16,9 @@ requireComponents.keys().forEach((fileName) => {
 export default {
   name: 'TIcon',
   props: {
+    color: {
+      type: Object,
+    },
     icon: {
       type: String,
       required: true,

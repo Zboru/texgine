@@ -100,10 +100,6 @@ export default {
       },
     };
   },
-  async mounted() {
-    await this.userDataExists('pAwZzFArrYXIBdLCIjgprPRxJCm1');
-    await this.userDataExists('1');
-  },
   methods: {
     async userDataExists(uid) {
       const doc = await db.collection('users')
@@ -141,6 +137,9 @@ export default {
         }).catch((err) => {
           this.alert.error = true;
           this.alert.errorText = err.message;
+        })
+        .finally(() => {
+          this.loggingIn = false;
         });
     },
     githubLogin() {
@@ -173,6 +172,9 @@ export default {
         .catch((err) => {
           this.alert.error = true;
           this.alert.errorText = err.message;
+        })
+        .finally(() => {
+          this.loggingIn = false;
         });
     },
   },
