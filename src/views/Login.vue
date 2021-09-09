@@ -70,7 +70,7 @@ import TAlert from '../components/General/TAlert.vue';
 import GithubIcon from '../components/Icons/GithubIcon.vue';
 import FacebookIcon from '../components/Icons/FacebookIcon.vue';
 import GoogleIcon from '../components/Icons/GoogleIcon.vue';
-import { db } from '../db';
+import { app } from '../db';
 import TButton from '../components/General/TButton.vue';
 import TDivider from '../components/General/TDivider.vue';
 
@@ -102,7 +102,7 @@ export default {
   },
   methods: {
     async userDataExists(uid) {
-      const doc = await db.collection('users')
+      const doc = await app.collection('users')
         .doc(uid)
         .get();
       return doc.data() !== undefined;
@@ -116,7 +116,7 @@ export default {
           this.loggingIn = false;
           const dataFlag = await this.userDataExists(data.user.uid);
           if (dataFlag) {
-            db.collection('users')
+            app.collection('users')
               .doc(data.user.uid)
               .get()
               .then((doc) => {
@@ -126,13 +126,16 @@ export default {
                 }, 2500);
               });
           } else {
-            await db.collection('users')
+            await app.collection('users')
               .doc(data.user.uid)
               .set({
                 uid: data.user.uid,
                 nick: `adventurer-${Math.floor(Math.random() * 9999)}`,
                 email: data.user.email,
               });
+            setTimeout(() => {
+              this.$router.replace({ name: 'Dashboard' });
+            }, 2500);
           }
         }).catch((err) => {
           this.alert.error = true;
@@ -159,7 +162,7 @@ export default {
         .then((data) => {
           this.alert.success = true;
           this.loggingIn = false;
-          db.collection('users')
+          app.collection('users')
             .doc(data.user.uid)
             .get()
             .then((doc) => {

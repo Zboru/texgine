@@ -51,7 +51,7 @@
 
 <script>
 import firebase from 'firebase';
-import { db } from '../db';
+import { app } from '../db';
 import TTextField from '../components/General/TTextField.vue';
 import FacebookIcon from '../components/Icons/FacebookIcon.vue';
 import GoogleIcon from '../components/Icons/GoogleIcon.vue';
@@ -82,7 +82,7 @@ export default {
           firebase.auth()
             .createUserWithEmailAndPassword(this.form.email, this.form.password)
             .then((data) => {
-              db.collection('users').doc(data.user.uid).set({
+              app.collection('users').doc(data.user.uid).set({
                 uid: data.user.uid,
                 nick: this.form.nick,
                 email: data.user.email,

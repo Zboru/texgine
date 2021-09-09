@@ -24,6 +24,7 @@
     "firebase": "7.24.0",
     "firebase-admin": "^9.11.1",
     "lodash": "^4.17.21",
+    "morgan": "^1.10.0",
     "nodemon": "^2.0.12",
     "portal-vue": "^2.1.7",
     "postcss": "7",
