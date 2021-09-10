@@ -1,26 +1,19 @@
-function handleResponse(response) {
-  return response.text().then((text) => {
-    const data = text && JSON.parse(text);
-    if (!response.ok) {
-      if (response.status === 401) {
-        // auto logout if 401 response returned from api
-        // logout();
-        // location.reload(true);
-      }
+// const admin = require('../firebase-admin');
+const app = require('../firebase');
 
-      const error = (data && data.message) || response.statusText;
-      return Promise.reject(error);
-    }
-
-    return data;
-  });
-}
-function getData() {
-  return fetch('http://localhost:1337/api/userData').then(handleResponse).then((data) => {
-    console.log(data);
-  });
-}
-
-export default {
-  getData,
+const getGames = async function (userId) {
+  try {
+    const doc = app.firestore().collection('users').doc(userId);
+    const user = await doc.get();
+    return user.data();
+  } catch (err) {
+    console.log(err);
+    return err;
+  }
 };
+
+const setUser = function () {
+  return true; // admin.auth().verifyIdToken();
+};
+
+module.exports = { setUser, getGames };
