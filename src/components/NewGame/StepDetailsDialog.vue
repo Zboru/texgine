@@ -1,6 +1,6 @@
 <template>
   <div v-if="show">
-    <overlay @click="show=false"/>
+    <t-overlay z-index="5" :state="show" @click="show=false"/>
     <div class="h-screen w-screen flex justify-center items-center">
       <div class="flex justify-center items-start">
         <step-details @deleted="show = false" @save="saveStep" class="mx-1" v-model="step"></step-details>
@@ -12,18 +12,18 @@
 </template>
 
 <script>
-import Overlay from '../General/TOverlay.vue';
 import StepDetails from './StepDetails.vue';
 import StepPreview from './StepPreview.vue';
 import StepChoices from './StepChoices.vue';
+import TOverlay from '../General/TOverlay.vue';
 
 export default {
   name: 'StepDetailsDialog',
   components: {
+    TOverlay,
     StepChoices,
     StepPreview,
     StepDetails,
-    Overlay,
   },
   props: ['value', 'step'],
   computed: {

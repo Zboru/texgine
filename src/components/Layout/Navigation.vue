@@ -27,7 +27,7 @@
               <router-link to="/" class="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium" aria-current="page">Dashboard</router-link>
               <router-link to="/browse"
                  class="text-gray-500 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Browse</router-link>
-              <router-link to="/create"
+              <router-link to="/my-games"
                  class="text-gray-500 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">My
                 games</router-link>
             </div>

@@ -1,7 +1,7 @@
 <template>
   <div>
     <t-overlay @click="show = false" :state="show"></t-overlay>
-    <div :class="sidebarClass" class="absolute z-50 top-0 flex items-center transition">
+    <div style="z-index: 2" :class="sidebarClass" class="absolute top-0 flex items-center transition">
       <div class="bg-white w-80 h-screen shadow">
         <slot></slot>
       </div>

@@ -12,7 +12,7 @@
       </button>
     </div>
     <div @mousedown.prevent="1"
-         class="origin-top-right absolute right-0 mt-2 w-56 z-50 transition ease-out duration-100 transform opacity-0 scale-95 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
+         class="origin-top-right absolute right-0 mt-2 w-56 z-50 transition ease-out duration-100 transform scale-95 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
          role="menu" :class="menuClasses" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
       <p class="px-4 py-2 text-sm font-normal">
         Signed in as:
@@ -56,8 +56,8 @@ export default {
   computed: {
     menuClasses() {
       return {
-        'transform opacity-0 scale-95': !this.state,
-        'transform opacity-100 scale-100': this.state,
+        'transform hidden scale-95': !this.state,
+        'transform visible scale-100': this.state,
       };
     },
     user() {

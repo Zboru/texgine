@@ -18,19 +18,31 @@
                 <t-text-area label="About" id="about" placeholder="About me"></t-text-area>
               </div>
               <p class="mt-2 text-sm text-gray-500">
-                Brief description for your profile. Content is rendered with Markdown, you can see available formatting here
+                Brief description for your profile. Content is rendered with <a class="underline"
+                                                                                href="//wikipedia.org/wiki/Markdown"
+                                                                                target="_blank">Markdown</a>, you can
+                see available formatting
+                <a class="underline" href="https://www.markdownguide.org/basic-syntax/" target="_blank">here</a>
               </p>
             </div>
-
+            <div>
+              <p class="block text-sm font-medium text-gray-700 mb-2">Preview of "About" section</p>
+              <div class="border border-gray-300 rounded pb-6 pl-1 pt-1">
+                <span class="italic text-sm text-gray-400">There's nothing to preview...</span>
+              </div>
+            </div>
+            <!-- End of About section -->
             <div>
               <label class="block text-sm font-medium text-gray-700">
                 Avatar
               </label>
               <div class="mt-1 flex items-center">
                 <img class="w-24 border rounded-full" :src="avatarURL" alt="">
-                <t-select v-model="userAvatar.service" :items="avatarServices" class="ml-2"
-                          placeholder="Select type"></t-select>
-                <t-text-field v-model="userAvatar.seed" class="ml-2" placeholder="Seed"></t-text-field>
+                <div>
+                  <t-text-field v-model="userAvatar.seed" class="ml-2" placeholder="Seed"></t-text-field>
+                  <t-select v-model="userAvatar.service" :items="avatarServices" class="mt-1 ml-2"
+                            placeholder="Select type"></t-select>
+                </div>
               </div>
             </div>
           </div>
@@ -143,7 +155,9 @@ export default {
   },
   methods: {
     async save() {
-      const token = await firebase.auth().currentUser.getIdToken();
+      const token = await firebase.auth()
+        .currentUser
+        .getIdToken();
       return axios.get('http://localhost:1337/api/userData', {
         headers:
           { authorization: `Bearer ${token}` },

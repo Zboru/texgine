@@ -1,5 +1,5 @@
 <template>
-  <div :class="overlayClasses" class="overlay" @click="$emit('click')"></div>
+  <div :style="`z-index: ${zIndex}`" :class="overlayClasses" class="overlay" @click="$emit('click')"></div>
 </template>
 
 <script>
@@ -9,6 +9,10 @@ export default {
     state: {
       type: Boolean,
       default: false,
+    },
+    zIndex: {
+      type: String,
+      default: '1',
     },
   },
   computed: {
@@ -29,6 +33,5 @@ export default {
   top: 0;
   left: 0;
   background: rgba(0,0,0,0.5);
-  z-index: 1;
 }
 </style>
