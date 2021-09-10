@@ -8,6 +8,7 @@ import Login from '../views/Login.vue';
 import NotFound from '../views/NotFound.vue';
 import Register from '../views/Register.vue';
 import Profile from '../views/Profile.vue';
+import MyGames from '../views/MyGames.vue';
 
 Vue.use(VueRouter);
 
@@ -40,6 +41,14 @@ const routes = [
     path: '/browse',
     name: 'Browse',
     component: Browse,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
+    path: '/my-games',
+    name: 'MyGames',
+    component: MyGames,
     meta: {
       requiresAuth: true,
     },
