@@ -102,7 +102,7 @@ export default {
   },
   methods: {
     async userDataExists(uid) {
-      const doc = await app.collection('users')
+      const doc = await app.firestore().collection('users')
         .doc(uid)
         .get();
       return doc.data() !== undefined;
@@ -116,7 +116,7 @@ export default {
           this.loggingIn = false;
           const dataFlag = await this.userDataExists(data.user.uid);
           if (dataFlag) {
-            app.collection('users')
+            app.firestore().collection('users')
               .doc(data.user.uid)
               .get()
               .then((doc) => {
@@ -126,7 +126,7 @@ export default {
                 }, 2500);
               });
           } else {
-            await app.collection('users')
+            await app.firestore().collection('users')
               .doc(data.user.uid)
               .set({
                 uid: data.user.uid,
@@ -162,7 +162,7 @@ export default {
         .then((data) => {
           this.alert.success = true;
           this.loggingIn = false;
-          app.collection('users')
+          app.firestore().collection('users')
             .doc(data.user.uid)
             .get()
             .then((doc) => {
