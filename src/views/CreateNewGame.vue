@@ -29,6 +29,7 @@
         </button>
       </div>
     </div>
+    <t-sidebar position="left" v-model="sidebar"></t-sidebar>
     <portal to="dialog">
       <step-details-dialog @save="saveStep" :step="game.selectedStep" v-model="dialogs.step_details"/>
     </portal>
@@ -38,16 +39,18 @@
 <script>
 import StepDetailsDialog from '../components/NewGame/StepDetailsDialog.vue';
 import Canvas from '../canvas/canvas';
+import TSidebar from '../components/General/TSidebar.vue';
 
 export default {
   name: 'CreateNewGame',
-  components: { StepDetailsDialog },
+  components: { TSidebar, StepDetailsDialog },
   data() {
     return {
       canvas: new Canvas(),
       dialogs: {
         step_details: false,
       },
+      sidebar: false,
       game: {
         steps: this.$store.getters.getSteps,
         selectedStep: null,

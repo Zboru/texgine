@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import Overlay from '../General/Overlay.vue';
+import Overlay from '../General/TOverlay.vue';
 import StepDetails from './StepDetails.vue';
 import StepPreview from './StepPreview.vue';
 import StepChoices from './StepChoices.vue';

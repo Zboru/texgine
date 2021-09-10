@@ -6,20 +6,18 @@
     </div>
     <div class="flex-grow"></div>
     <div class="flex">
-      <span class="flex mx-1">
-        <t-icon class="mr-1" icon="star" />
-        4.5</span>
-      <span class="flex mx-1"><t-icon class="mr-1" icon="heart" /> 12</span>
-      <span class="flex mx-1"><t-icon class="mr-1" icon="play" /> 132</span>
+      <t-counter dense value="4.5" icon="star" />
+      <t-counter class="mx-2" dense value="12" icon="heart" />
+      <t-counter dense value="132" icon="play" />
     </div>
   </div>
 </template>
 
 <script>
-import TIcon from '../General/TIcon.vue';
+import TCounter from '../General/TCounter.vue';
 
 export default {
   name: 'GameBar',
-  components: { TIcon },
+  components: { TCounter },
 };
 </script>

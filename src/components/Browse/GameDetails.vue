@@ -8,9 +8,9 @@
           est eum excepturi iure minima minus nam, natus necessitatibus nesciunt perspiciatis quidem quod repellendus
           veritatis voluptatum!</p>
         <div class="grid grid-cols-2 mt-4">
-          <game-counter icon="heart" text="Favorite count" value="12"></game-counter>
-          <game-counter icon="star" text="Rating" value="4.5"></game-counter>
-          <game-counter icon="play" text="Play count" value="123" class="mt-2"></game-counter>
+          <t-counter icon="heart" text="Favorite count" value="12" />
+          <t-counter icon="star" text="Rating" value="4.5" />
+          <t-counter class="mt-2" icon="play" text="Play count" value="123" />
         </div>
         <div class="flex-grow"></div>
         <div class="flex">
@@ -30,14 +30,16 @@
 </template>
 
 <script>
-import GameCounter from './GameCounter.vue';
 import TButton from '../General/TButton.vue';
 import GameComment from './GameComment.vue';
+import TCounter from '../General/TCounter.vue';
 
 export default {
   name: 'GameDetails',
   components: {
-    GameComment, TButton, GameCounter,
+    TCounter,
+    GameComment,
+    TButton,
   },
 };
 </script>
