@@ -18,7 +18,7 @@
         <t-text-field v-model="form.password" type="password" label="Password"></t-text-field>
         <div class="flex items-center justify-between my-6">
           <div class="flex items-center">
-            <input id="remember-me" name="remember-me" type="checkbox"
+            <input id="remember-me" v-model="form.remember" name="remember-me" type="checkbox"
                    class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"/>
             <label for="remember-me" class="ml-2 block select-none text-sm text-gray-900">
               Remember me
@@ -30,7 +30,7 @@
             </a>
           </div>
         </div>
-        <t-button class="mb-3" :disabled="loggingIn" :loading="loggingIn" @onClick="submit" variant="success"
+        <t-button class="mb-3" :disabled="loggingIn" :loading="loggingIn" @click="submit" variant="success"
                   icon="lock-closed">Sign in
         </t-button>
         <t-divider class="my-3">Or continue with</t-divider>
@@ -51,11 +51,11 @@
       </div>
     </div>
     <portal to="alert">
-      <t-alert v-model="alert.error" variant="danger" class="max-w-md">
+      <t-alert borders v-model="alert.error" variant="danger" class="max-w-md">
         <template #title>Oops! Something went wrong.</template>
         <template #text>{{ alert.errorText }}</template>
       </t-alert>
-      <t-alert v-model="alert.success" variant="success" class="max-w-md">
+      <t-alert borders v-model="alert.success" variant="success" class="max-w-md">
         <template #title>Login successful</template>
         <template #text>You will be taken to the dashboard in a moment</template>
       </t-alert>
@@ -88,13 +88,15 @@ export default {
   data() {
     return {
       form: {
-        email: 'zboru99@gmail.com',
-        password: 'qwertyy123',
+        email: '',
+        password: '',
+        remember: false,
       },
       loggingIn: false,
       alert: {
         success: false,
         error: false,
+        errorText: false,
         title: null,
         text: null,
       },
@@ -158,26 +160,29 @@ export default {
       this.loggingIn = true;
       firebase
         .auth()
-        .signInWithEmailAndPassword(this.form.email, this.form.password)
-        .then((data) => {
-          this.alert.success = true;
-          this.loggingIn = false;
-          app.firestore().collection('users')
-            .doc(data.user.uid)
-            .get()
-            .then((doc) => {
-              this.$store.commit('setUserData', doc.data());
-              setTimeout(() => {
-                this.$router.replace({ name: 'Dashboard' });
-              }, 2500);
+        .setPersistence(this.form.remember ? firebase.auth.Auth.Persistence.LOCAL : firebase.auth.Auth.Persistence.SESSION)
+        .then(() => {
+          firebase.auth().signInWithEmailAndPassword(this.form.email, this.form.password)
+            .then((data) => {
+              this.alert.success = true;
+              this.loggingIn = false;
+              app.firestore().collection('users')
+                .doc(data.user.uid)
+                .get()
+                .then((doc) => {
+                  this.$store.commit('setUserData', doc.data());
+                  setTimeout(() => {
+                    this.$router.replace({ name: 'Dashboard' });
+                  }, 2500);
+                });
+            })
+            .catch((err) => {
+              this.alert.error = true;
+              this.alert.errorText = err.message;
+            })
+            .finally(() => {
+              this.loggingIn = false;
             });
-        })
-        .catch((err) => {
-          this.alert.error = true;
-          this.alert.errorText = err.message;
-        })
-        .finally(() => {
-          this.loggingIn = false;
         });
     },
   },

@@ -62,3 +62,10 @@ body {
     transform: translateX(10px);
     opacity: 0;
 }
+
+@media screen and (max-width: 600px) {
+    .alert-portal {
+        padding: 10px;
+        right: 0;
+    }
+}

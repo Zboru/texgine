@@ -2,7 +2,7 @@
   <div id="app">
     <navigation v-if="!$route.meta.plainLayout" />
     <router-view v-if="dataLoaded || $route.meta.plainLayout"/>
-    <preloader v-if="!dataLoaded"></preloader>
+    <preloader v-if="!$route.meta.plainLayout && !dataLoaded"></preloader>
     <portal-target class="dialog-portal" name="dialog" multiple></portal-target>
     <portal-target class="alert-portal" name="alert" multiple></portal-target>
   </div>
