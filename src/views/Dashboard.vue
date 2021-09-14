@@ -18,27 +18,30 @@ export default {
   components: { TButton },
   methods: {
     auth() {
-      httpManager.get('http://localhost:1337/api/').then((res) => {
-        console.log(res.data);
-      });
+      httpManager.get('http://localhost:1337/api/')
+        .then((res) => {
+          console.log(res.data);
+        });
     },
     apiVer() {
       axios.get('http://localhost:1337/api/', {
         headers: {
           Authorization: `Bearer ${window.localStorage.getItem('token')}`,
         },
-      }).then((res) => {
-        console.log(res);
-      }).catch((err) => {
-        console.error(err);
-      });
+      })
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => {
+          console.error(err);
+        });
     },
   },
 };
 </script>
 
 <style scoped>
-  .container .btn {
-    @apply mx-2 mt-2;
-  }
+.container .btn {
+  @apply mx-2 mt-2;
+}
 </style>

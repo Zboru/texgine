@@ -1,5 +1,5 @@
 <template>
-  <div class="border-2 p-2 rounded flex flex-col items-end hover:border-gray-500 transition cursor-pointer hover:border-2">
+  <div @click="$emit('click')" class="border-2 p-2 rounded flex flex-col items-end hover:border-gray-500 transition cursor-pointer hover:border-2">
     <div class="flex w-full">
       <span class="text-xl font-medium">{{game.title}}</span>
       <div class="flex-grow"></div>
