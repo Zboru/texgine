@@ -38,16 +38,16 @@ export default {
       default: false,
     },
   },
-  data() {
-    return {
-      buttonClasses: {
+  computed: {
+    buttonClasses() {
+      return {
         primary: this.variant === 'primary',
         success: this.variant === 'success',
         danger: this.variant === 'danger',
-        disabled: this.disabled === true,
+        disabled: this.disabled,
         'block w-full': this.block === true,
-      },
-    };
+      };
+    },
   },
   methods: {
     onClick() {
