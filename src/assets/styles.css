@@ -16,7 +16,15 @@ nav {
 }
 
 body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    height: 100vh;
     @apply bg-gray-200
+}
+
+#app {
+    @apply h-full
 }
 
 .dialog-portal {
