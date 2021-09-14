@@ -10,8 +10,10 @@ const getGames = function (req, res) {
   });
 };
 
-const setUser = function (req, res, next) {
-  userService.setUser();
+const setUser = function (req, res) {
+  userService.setUser(req.params.uid, req.body).then((rest) => {
+    res.json(rest);
+  });
 };
 
 module.exports = { getUser, getGames, setUser };

@@ -10,5 +10,13 @@ const httpManager = {
       },
     });
   },
+  async post(url, data) {
+    const idToken = await app.auth().currentUser.getIdToken();
+    return axios.post(url, data, {
+      headers: {
+        Authorization: `Bearer ${idToken}`,
+      },
+    });
+  },
 };
 export default httpManager;

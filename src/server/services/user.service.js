@@ -12,8 +12,15 @@ const getGames = async function (userId) {
   }
 };
 
-const setUser = function () {
-  return true; // admin.auth().verifyIdToken();
+const setUser = async function (userId, data) {
+  try {
+    const doc = app.firestore().collection('users').doc(userId);
+    const user = await doc.update(data);
+    return user;
+  } catch (err) {
+    console.log(err);
+    return err;
+  }
 };
 
 module.exports = { setUser, getGames };
