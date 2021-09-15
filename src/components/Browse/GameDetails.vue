@@ -33,26 +33,23 @@
           </div>
         </div>
       </div>
-      <div class="">
+      <div class="flex flex-col">
         <div class="flex items-end mb-2">
           <p class="font-medium text-lg">Comments:</p>
           <div class="flex-grow"></div>
           <t-button icon="pencil">Add comment</t-button>
         </div>
-        <div class="no-scrollbar overflow-y-scroll h-full">
+        <div class="no-scrollbar overflow-y-scroll flex-grow">
           <game-comment v-for="(comment, index) in game.comments" :key="index"></game-comment>
           <empty-comment-panel v-if="!game.comments"></empty-comment-panel>
         </div>
       </div>
     </div>
+    <delete-game-dialog @deleted="afterDelete" :game="game" v-model="dialogs.delete"></delete-game-dialog>
     <portal to="alert">
       <t-alert variant="success" borders v-model="alerts.clone">
         <template #title>Success!</template>
         <template #text>Successfully cloned a game to your library.</template>
-      </t-alert>
-      <t-alert variant="success" borders v-model="alerts.delete">
-        <template #title>Success!</template>
-        <template #text>Successfully deleted game from your library.</template>
       </t-alert>
     </portal>
   </div>
@@ -66,6 +63,7 @@ import EmptyGamePanel from './EmptyGamePanel.vue';
 import httpManager from '../../utils/httpManager';
 import EmptyCommentPanel from './EmptyCommentPanel.vue';
 import TAlert from '../General/TAlert.vue';
+import DeleteGameDialog from '../MyGames/DeleteGameDialog.vue';
 
 export default {
   name: 'GameDetails',
@@ -75,6 +73,7 @@ export default {
     },
   },
   components: {
+    DeleteGameDialog,
     TAlert,
     EmptyCommentPanel,
     EmptyGamePanel,
@@ -86,6 +85,9 @@ export default {
     return {
       alerts: {
         clone: false,
+        delete: false,
+      },
+      dialogs: {
         delete: false,
       },
     };
@@ -114,10 +116,10 @@ export default {
       });
     },
     deleteGame() {
-      httpManager.delete(`${process.env.VUE_APP_API_URL}/games/${this.game.id}`).then((response) => {
-        this.$emit('deleted', response.data.games);
-        this.alerts.delete = true;
-      });
+      this.dialogs.delete = true;
+    },
+    afterDelete(games) {
+      this.$emit('deleted', games);
     },
   },
 };

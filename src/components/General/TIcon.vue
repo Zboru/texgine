@@ -17,7 +17,7 @@ export default {
   name: 'TIcon',
   props: {
     color: {
-      type: Object,
+      type: String,
     },
     icon: {
       type: String,
