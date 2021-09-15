@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "@tailwindcss/postcss7-compat": "^2.2.7",
+    "@vue/composition-api": "^1.1.5",
+    "@vueuse/core": "^6.3.3",
     "autoprefixer": "9",
     "axios": "^0.21.1",
     "babel-runtime": "^6.26.0",
