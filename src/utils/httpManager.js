@@ -1,22 +1,24 @@
 import axios from 'axios';
 import { app } from '../db';
 
+async function getConfig() {
+  const idToken = await app.auth().currentUser.getIdToken();
+  return {
+    headers: {
+      Authorization: `Bearer ${idToken}`,
+    },
+  };
+}
+
 const httpManager = {
   async get(url) {
-    const idToken = await app.auth().currentUser.getIdToken();
-    return axios.get(url, {
-      headers: {
-        Authorization: `Bearer ${idToken}`,
-      },
-    });
+    return axios.get(url, await getConfig());
   },
   async post(url, data) {
-    const idToken = await app.auth().currentUser.getIdToken();
-    return axios.post(url, data, {
-      headers: {
-        Authorization: `Bearer ${idToken}`,
-      },
-    });
+    return axios.post(url, data, await getConfig());
+  },
+  async delete(url) {
+    return axios.delete(url, await getConfig());
   },
 };
 export default httpManager;
