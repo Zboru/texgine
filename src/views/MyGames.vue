@@ -3,8 +3,8 @@
     <div class="px-3">
       <div class="flex items-center">
         <h2 class="text-2xl mr-4 font-medium">My games</h2>
-        <t-select class="max-w-md" :items="items" v-model="sortBy" placeholder="Select item"></t-select>
         <div class="flex-grow"></div>
+        <t-select class="max-w-md mr-2" :items="items" v-model="sortBy" placeholder="Sort by"></t-select>
         <t-text-field placeholder="Search">
           <template #icon>
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
@@ -21,7 +21,7 @@
         </template>
       </div>
     </div>
-    <game-details :game="selectedGame" class="px-3"></game-details>
+    <game-details @deleted="refreshGames" @cloned="addGame" v-model="selectedGame" class="px-3"></game-details>
   </t-container>
 </template>
 
@@ -73,6 +73,13 @@ export default {
     setGame(game) {
       this.selectedGame = game;
       this.$forceUpdate();
+    },
+    refreshGames(games) {
+      this.games = games;
+      this.selectedGame = {};
+    },
+    addGame(game) {
+      this.$set(this.games, game.id, game);
     },
   },
 };

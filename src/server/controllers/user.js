@@ -11,8 +11,8 @@ const getGames = function (req, res) {
 };
 
 const setUser = function (req, res) {
-  userService.setUser(req.params.uid, req.body).then((rest) => {
-    res.json(rest);
+  userService.setUser(req.params.uid, req.body).then(() => {
+    res.json({ message: 'Successfuly saved user profile settings' });
   });
 };
 

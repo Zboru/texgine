@@ -1,8 +1,8 @@
 <template>
-  <div class="border- border-dashed h-full flex items-center justify-center flex-col text-gray-400">
+  <div class="h-full flex items-center justify-center flex-col text-gray-400">
     <t-icon class="w-12 h-12" icon="folder-open"></t-icon>
     <p class="font-medium">No game selected</p>
-    <p>Select a game to view its details</p>
+    <p>Select a game to view it's details</p>
   </div>
 </template>
 

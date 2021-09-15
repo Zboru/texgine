@@ -1,28 +1,28 @@
 <template>
-  <div>
-    <div class="flex">
-      <t-button :disabled="!gameExists" @click="game = {}" icon="x">Close</t-button>
-      <t-button :disabled="!gameExists" icon="duplicate" class="mx-2">Clone</t-button>
-      <t-button :disabled="!gameExists" variant="danger" icon="duplicate">Delete</t-button>
+  <div class="divide-y">
+    <div class="flex mb-2">
+      <t-button @click="closeDetails" :disabled="!gameExists" icon="x">Close</t-button>
+      <t-button @click="cloneGame" :disabled="!gameExists" icon="duplicate" class="mx-2">Clone</t-button>
+      <t-button @click="deleteGame" :disabled="!gameExists" variant="danger" icon="trash">Delete</t-button>
       <div class="flex-grow"></div>
       <t-button variant="success">Create new</t-button>
     </div>
-    <t-divider class="my-1.5"></t-divider>
     <empty-game-panel v-if="!gameExists"></empty-game-panel>
     <div v-if="gameExists" class="grid grid-rows-2 gap-3">
       <div>
-
-        <div class="flex">
+        <div class="flex mt-2">
           <img src="https://via.placeholder.com/600x400" class="max-w-xs object-cover" alt="game image">
           <div class="mt-4 ml-4 flex flex-col">
             <p class="font-medium text-2xl">Adventures of Superman: Part 1</p>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam autem consequuntur cumque distinctio enim,
-              est eum excepturi iure minima minus nam, natus necessitatibus nesciunt perspiciatis quidem quod repellendus
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam autem consequuntur cumque distinctio
+              enim,
+              est eum excepturi iure minima minus nam, natus necessitatibus nesciunt perspiciatis quidem quod
+              repellendus
               veritatis voluptatum!</p>
             <div class="grid grid-cols-2 mt-4">
-              <t-counter icon="heart" text="Favorite count" value="12" />
-              <t-counter icon="star" text="Rating" value="4.5" />
-              <t-counter class="mt-2" icon="play" text="Play count" value="123" />
+              <t-counter icon="heart" text="Favorite count" value="12"/>
+              <t-counter icon="star" text="Rating" value="4.5"/>
+              <t-counter class="mt-2" icon="play" text="Play count" value="123"/>
             </div>
             <div class="flex-grow"></div>
             <div class="flex">
@@ -34,12 +34,27 @@
         </div>
       </div>
       <div class="">
-        <p class="font-medium">Comments:</p>
-        <div class="no-scrollbar overflow-y-scroll max-h-80">
-          <game-comment v-for="n in 5" :key="n"></game-comment>
+        <div class="flex items-end mb-2">
+          <p class="font-medium text-lg">Comments:</p>
+          <div class="flex-grow"></div>
+          <t-button icon="pencil">Add comment</t-button>
+        </div>
+        <div class="no-scrollbar overflow-y-scroll h-full">
+          <game-comment v-for="(comment, index) in game.comments" :key="index"></game-comment>
+          <empty-comment-panel v-if="!game.comments"></empty-comment-panel>
         </div>
       </div>
     </div>
+    <portal to="alert">
+      <t-alert variant="success" borders v-model="alerts.clone">
+        <template #title>Success!</template>
+        <template #text>Successfully cloned a game to your library.</template>
+      </t-alert>
+      <t-alert variant="success" borders v-model="alerts.delete">
+        <template #title>Success!</template>
+        <template #text>Successfully deleted game from your library.</template>
+      </t-alert>
+    </portal>
   </div>
 </template>
 
@@ -48,26 +63,62 @@ import TButton from '../General/TButton.vue';
 import GameComment from './GameComment.vue';
 import TCounter from '../General/TCounter.vue';
 import EmptyGamePanel from './EmptyGamePanel.vue';
-import TDivider from '../General/TDivider.vue';
+import httpManager from '../../utils/httpManager';
+import EmptyCommentPanel from './EmptyCommentPanel.vue';
+import TAlert from '../General/TAlert.vue';
 
 export default {
   name: 'GameDetails',
   props: {
-    game: {
+    value: {
       type: Object,
     },
   },
-  computed: {
-    gameExists() {
-      return JSON.stringify(this.game) !== '{}';
-    },
-  },
   components: {
-    TDivider,
+    TAlert,
+    EmptyCommentPanel,
     EmptyGamePanel,
     TCounter,
     GameComment,
     TButton,
+  },
+  data() {
+    return {
+      alerts: {
+        clone: false,
+        delete: false,
+      },
+    };
+  },
+  computed: {
+    game: {
+      get() {
+        return this.value;
+      },
+      set(value) {
+        this.$emit('input', value);
+      },
+    },
+    gameExists() {
+      return JSON.stringify(this.game) !== '{}';
+    },
+  },
+  methods: {
+    closeDetails() {
+      this.game = {};
+    },
+    cloneGame() {
+      httpManager.post(`${process.env.VUE_APP_API_URL}/games/${this.game.id}/clone`).then((response) => {
+        this.$emit('cloned', response.data);
+        this.alerts.clone = true;
+      });
+    },
+    deleteGame() {
+      httpManager.delete(`${process.env.VUE_APP_API_URL}/games/${this.game.id}`).then((response) => {
+        this.$emit('deleted', response.data.games);
+        this.alerts.delete = true;
+      });
+    },
   },
 };
 </script>
