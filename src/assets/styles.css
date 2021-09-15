@@ -71,6 +71,10 @@ body {
     opacity: 0;
 }
 
+nav .navbar-links .router-link-exact-active {
+    @apply bg-gray-900 text-white
+}
+
 @media screen and (max-width: 600px) {
     .alert-portal {
         padding: 10px;
