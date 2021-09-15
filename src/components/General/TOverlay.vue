@@ -1,5 +1,7 @@
 <template>
-  <div :style="`z-index: ${zIndex}`" :class="overlayClasses" class="overlay" @click="$emit('click')"></div>
+  <div :style="`z-index: ${zIndex}`" :class="overlayClasses" class="overlay" @click="$emit('click')">
+    <slot></slot>
+  </div>
 </template>
 
 <script>
@@ -26,7 +28,7 @@ export default {
 </script>
 <style>
 .overlay  {
-  transition: .25s all;
+  overflow: hidden;
   width: 100vw;
   height: 100vh;
   position: absolute;

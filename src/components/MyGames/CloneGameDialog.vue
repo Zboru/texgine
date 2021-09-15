@@ -1,21 +1,21 @@
 <template>
   <div>
-    <t-modal icon-preset="danger" v-model="show">
+    <t-modal icon-preset="warning" v-model="show">
       <template #title>
-        Delete game
+        Clone game
       </template>
       <template #description>
-        Are you sure you want to delete this game? Game and its data will be permanently removed. This action cannot be undone.
+        Are you sure you want to clone this game? Only basic data such as game content and information will be copied. Counters and comments will be resetted.
       </template>
       <template #actions>
-        <t-button :block="isMobile" variant="danger" :class="deleteButtonClasses" @click="deleteGame">Delete</t-button>
+        <t-button :block="isMobile" variant="success" :class="cloneButtonClasses" @click="cloneGame">Clone</t-button>
         <t-button :block="isMobile" @click="closeDialog">Cancel</t-button>
       </template>
     </t-modal>
     <portal to="alert">
       <t-alert variant="success" borders v-model="alert">
         <template #title>Success!</template>
-        <template #text>Successfully deleted game from your library.</template>
+        <template #text>Successfully clone game to your library.</template>
       </t-alert>
     </portal>
   </div>
@@ -29,7 +29,7 @@ import httpManager from '../../utils/httpManager';
 import TAlert from '../General/TAlert.vue';
 
 export default {
-  name: 'DeleteGameDialog',
+  name: 'CloneGameDialog',
   components: { TAlert, TButton, TModal },
   props: {
     value: {
@@ -60,7 +60,7 @@ export default {
     isMobile() {
       return useMediaQuery('(max-width: 639px)').value;
     },
-    deleteButtonClasses() {
+    cloneButtonClasses() {
       return {
         'ml-1': this.isMobile !== true,
         'mb-1': this.isMobile === true,
@@ -71,9 +71,9 @@ export default {
     closeDialog() {
       this.show = false;
     },
-    deleteGame() {
-      httpManager.delete(`${process.env.VUE_APP_API_URL}/games/${this.game.id}`).then((response) => {
-        this.$emit('deleted', response.data.games);
+    cloneGame() {
+      httpManager.post(`${process.env.VUE_APP_API_URL}/games/${this.game.id}/clone`).then((response) => {
+        this.$emit('cloned', response.data);
         this.alert = true;
         this.show = false;
       });

@@ -45,6 +45,7 @@
         </div>
       </div>
     </div>
+    <clone-game-dialog @cloned="afterClone" :game="game" v-model="dialogs.clone"></clone-game-dialog>
     <delete-game-dialog @deleted="afterDelete" :game="game" v-model="dialogs.delete"></delete-game-dialog>
     <portal to="alert">
       <t-alert variant="success" borders v-model="alerts.clone">
@@ -60,10 +61,10 @@ import TButton from '../General/TButton.vue';
 import GameComment from './GameComment.vue';
 import TCounter from '../General/TCounter.vue';
 import EmptyGamePanel from './EmptyGamePanel.vue';
-import httpManager from '../../utils/httpManager';
 import EmptyCommentPanel from './EmptyCommentPanel.vue';
 import TAlert from '../General/TAlert.vue';
 import DeleteGameDialog from '../MyGames/DeleteGameDialog.vue';
+import CloneGameDialog from '../MyGames/CloneGameDialog.vue';
 
 export default {
   name: 'GameDetails',
@@ -73,6 +74,7 @@ export default {
     },
   },
   components: {
+    CloneGameDialog,
     DeleteGameDialog,
     TAlert,
     EmptyCommentPanel,
@@ -89,6 +91,7 @@ export default {
       },
       dialogs: {
         delete: false,
+        clone: false,
       },
     };
   },
@@ -110,16 +113,16 @@ export default {
       this.game = {};
     },
     cloneGame() {
-      httpManager.post(`${process.env.VUE_APP_API_URL}/games/${this.game.id}/clone`).then((response) => {
-        this.$emit('cloned', response.data);
-        this.alerts.clone = true;
-      });
+      this.dialogs.clone = true;
     },
     deleteGame() {
       this.dialogs.delete = true;
     },
     afterDelete(games) {
       this.$emit('deleted', games);
+    },
+    afterClone(game) {
+      this.$emit('cloned', game);
     },
   },
 };
