@@ -14,7 +14,3 @@ export default {
   components: { TIcon },
 };
 </script>
-
-<style scoped>
-
-</style>

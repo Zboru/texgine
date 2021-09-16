@@ -1,28 +1,17 @@
 <template>
   <div>
-    <div class="flex border-b pb-2">
-      <t-button @click="closeDetails" :disabled="!gameExists" icon="x">Close</t-button>
-      <t-button @click="cloneGame" :disabled="!gameExists" icon="duplicate" class="mx-2">Clone</t-button>
-      <t-button @click="deleteGame" :disabled="!gameExists" variant="danger" icon="trash">Delete</t-button>
-      <div class="flex-grow"></div>
-      <t-button @click="createNewGame" variant="success">Create new</t-button>
-    </div>
-    <empty-game-panel v-if="!gameExists"></empty-game-panel>
+    <empty-game-panel class="flex-grow" v-if="!gameExists"></empty-game-panel>
     <div v-if="gameExists" class="grid grid-rows-2 gap-3">
       <div>
         <div class="flex mt-2">
           <img src="https://via.placeholder.com/600x400" class="max-w-xs object-cover" alt="game image">
-          <div class="mt-4 ml-4 flex flex-col">
-            <p class="font-medium text-2xl">Adventures of Superman: Part 1</p>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam autem consequuntur cumque distinctio
-              enim,
-              est eum excepturi iure minima minus nam, natus necessitatibus nesciunt perspiciatis quidem quod
-              repellendus
-              veritatis voluptatum!</p>
+          <div class="mt-4 ml-4 flex-grow flex flex-col">
+            <p class="font-medium text-2xl">{{ game.title }}</p>
+            <p>{{game.description}}</p>
             <div class="grid grid-cols-2 mt-4">
-              <t-counter icon="heart" text="Favorite count" value="12"/>
-              <t-counter icon="star" text="Rating" value="4.5"/>
-              <t-counter class="mt-2" icon="play" text="Play count" value="123"/>
+              <t-counter icon="heart" text="Favorite count" :value="game.favorite_count"/>
+              <t-counter icon="star" text="Rating" :value="game.rating"/>
+              <t-counter class="mt-2" icon="play" text="Play count" :value="game.play_count"/>
             </div>
             <div class="flex-grow"></div>
             <div class="flex">
@@ -41,19 +30,11 @@
         </div>
         <div class="no-scrollbar overflow-y-scroll flex-grow">
           <game-comment v-for="(comment, index) in game.comments" :key="index"></game-comment>
-          <empty-comment-panel v-if="!game.comments"></empty-comment-panel>
+          <empty-comment-panel v-if="!commentsExists"></empty-comment-panel>
         </div>
       </div>
     </div>
-    <clone-game-dialog @cloned="afterClone" :game="game" v-model="dialogs.clone"></clone-game-dialog>
-    <delete-game-dialog @deleted="afterDelete" :game="game" v-model="dialogs.delete"></delete-game-dialog>
-    <portal to="alert">
-      <t-alert variant="success" borders v-model="alerts.clone">
-        <template #title>Success!</template>
-        <template #text>Successfully cloned a game to your library.</template>
-      </t-alert>
-    </portal>
-  </div>
+     </div>
 </template>
 
 <script>
@@ -62,22 +43,10 @@ import GameComment from './GameComment.vue';
 import TCounter from '../General/TCounter.vue';
 import EmptyGamePanel from './EmptyGamePanel.vue';
 import EmptyCommentPanel from './EmptyCommentPanel.vue';
-import TAlert from '../General/TAlert.vue';
-import DeleteGameDialog from '../MyGames/DeleteGameDialog.vue';
-import CloneGameDialog from '../MyGames/CloneGameDialog.vue';
-import httpManager from '../../utils/httpManager';
 
 export default {
   name: 'GameDetails',
-  props: {
-    value: {
-      type: Object,
-    },
-  },
   components: {
-    CloneGameDialog,
-    DeleteGameDialog,
-    TAlert,
     EmptyCommentPanel,
     EmptyGamePanel,
     TCounter,
@@ -99,40 +68,22 @@ export default {
   computed: {
     game: {
       get() {
-        return this.value;
+        return this.$store.getters.getGame;
       },
       set(value) {
-        this.$emit('input', value);
+        this.$store.commit('setGame', value);
       },
     },
     gameExists() {
       return JSON.stringify(this.game) !== '{}';
     },
+    commentsExists() {
+      return this.gameExists && this.game.comments && this.game.comments.length;
+    },
   },
   methods: {
-    createNewGame() {
-      httpManager.post(`${process.env.VUE_APP_API_URL}/games`).then((response) => {
-        this.$store.commit('setGame', response.data);
-        this.$router.push(`/games/${response.data.id}/edit`);
-      });
-    },
     editGame() {
       this.$router.push(`/games/${this.game.id}/edit`);
-    },
-    closeDetails() {
-      this.game = {};
-    },
-    cloneGame() {
-      this.dialogs.clone = true;
-    },
-    deleteGame() {
-      this.dialogs.delete = true;
-    },
-    afterDelete(games) {
-      this.$emit('deleted', games);
-    },
-    afterClone(game) {
-      this.$emit('cloned', game);
     },
   },
 };

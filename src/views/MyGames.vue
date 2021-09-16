@@ -21,7 +21,10 @@
         </template>
       </div>
     </div>
-    <game-details @deleted="refreshGames" @cloned="addGame" v-model="selectedGame" class="px-3"></game-details>
+    <div class="flex flex-col px-3">
+      <game-actions @deleted="refreshGames" @cloned="addGame"></game-actions>
+      <game-details class="flex-grow"></game-details>
+    </div>
   </t-container>
 </template>
 
@@ -32,10 +35,12 @@ import TTextField from '../components/General/TTextField.vue';
 import GameBar from '../components/Browse/GameBar.vue';
 import GameDetails from '../components/Browse/GameDetails.vue';
 import httpManager from '../utils/httpManager';
+import GameActions from '../components/MyGames/GameActions.vue';
 
 export default {
   name: 'MyGames',
   components: {
+    GameActions,
     GameDetails,
     GameBar,
     TTextField,
@@ -48,11 +53,18 @@ export default {
         this.games = response.data.games;
       });
   },
+  beforeCreate() {
+    // Reset game variable in store so there's no unexpected behaviour
+    this.$store.commit('setGame', {});
+  },
+  beforeDestroy() {
+    // Reset game variable in store so there's no unexpected behaviour
+    this.$store.commit('setGame', {});
+  },
   data() {
     return {
       sortBy: null,
       games: [],
-      selectedGame: {},
       items: [
         {
           text: 'Most played',
@@ -71,7 +83,6 @@ export default {
   },
   methods: {
     setGame(game) {
-      this.selectedGame = game;
       this.$store.commit('setGame', game);
     },
     refreshGames(games) {

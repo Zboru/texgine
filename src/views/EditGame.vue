@@ -91,7 +91,7 @@ export default {
       }
     },
     saveGameFirebase() {
-      httpManager.put(`${process.env.VUE_APP_API_URL}/games/${this.game.id}`);
+      httpManager.put(`${process.env.VUE_APP_API_URL}/games/${this.game.id}`, this.game);
     },
     registerListeners() {
       // Show dialog after double-clicking node
