@@ -20,5 +20,8 @@ const httpManager = {
   async delete(url) {
     return axios.delete(url, await getConfig());
   },
+  async put(url, data) {
+    return axios.put(url, data, await getConfig());
+  },
 };
 export default httpManager;
