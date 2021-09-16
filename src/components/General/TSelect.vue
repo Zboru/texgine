@@ -1,5 +1,6 @@
 <template>
   <div class="relative">
+    <label class="text-xs text-gray-500" v-if="label">{{label}}</label>
     <div @focus="state = true" @focusout="state =false" tabindex="-1" class="t-select"
          :class="selectClasses">
       <span class="pointer-events-none select-none">{{ selectText }}</span>
@@ -8,16 +9,16 @@
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
       </svg>
     </div>
-    <div v-if="state && items.length"
-         class="autocomplete-list max-h-36 overflow-y-scroll absolute w-full shadow rounded no-scrollbar w-100">
+    <div v-show="state && items.length"
+         class="autocomplete-list max-h-44 overflow-y-scroll z-10 bg-white absolute w-full shadow rounded no-scrollbar w-100">
       <div @mouseover="listPosition = index" @mousedown.prevent="selectItem(item)" class="border p-2 hover:bg-gray-200 cursor-pointer"
            :class="{'bg-gray-300 active-list-item': listPosition === index, 'bg-white': listPosition !== index}"
            v-for="(item, index) in items"
            :key="index">{{ item[itemText] }}
       </div>
     </div>
-    <div @mousedown.prevent="doNothing" class="absolute w-full shadow rounded-b w-100"
-         v-if="state && !items.length">
+    <div @mousedown.prevent="doNothing" class="absolute w-full z-10 bg-white shadow rounded-b w-100"
+         v-show="state && !items.length">
       <div class="border bg-white p-2 flex justify-center text-gray-300">
         <svg xmlns="http://www.w3.org/2000/svg" class="-ml-2 h-6 w-6" fill="none" viewBox="0 0 24 24"
              stroke="currentColor">
@@ -98,7 +99,7 @@ export default {
       return false;
     },
     selectItem(item) {
-      document.querySelector('.t-select').blur();
+      document.querySelectorAll('.t-select').forEach((select) => select.blur());
       this.selectedItem = item;
       this.item = item[this.itemValue];
     },
