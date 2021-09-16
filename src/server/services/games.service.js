@@ -47,6 +47,7 @@ const cloneGame = async function (userId, gameId) {
     const newGame = {
       ...game,
       author: userData.nick,
+      title: `${game.title} - Clone`,
       id: newGameId,
     };
 
@@ -75,8 +76,19 @@ const deleteGame = async function (userId, gameId) {
   }
 };
 
-const saveGame = async function (userId, gameId) {
-  return '123';
+const saveGame = async function (userId, gameId, data) {
+  try {
+    const userRef = app.firestore().collection('users').doc(userId);
+    const userData = (await userRef.get()).data();
+
+    userData.games[gameId] = data;
+    await userRef.set(userData);
+
+    return userData;
+  } catch (err) {
+    console.error(err);
+    return err;
+  }
 };
 
 module.exports = {
