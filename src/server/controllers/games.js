@@ -26,7 +26,8 @@ const deleteGame = function (req, res) {
 const saveGame = function (req, res) {
   const gameId = req.params.id;
   const userId = req.authId;
-  gamesService.saveGame(userId, gameId).then((user) => {
+  const data = req.body;
+  gamesService.saveGame(userId, gameId, data).then((user) => {
     res.json(user);
   });
 };
