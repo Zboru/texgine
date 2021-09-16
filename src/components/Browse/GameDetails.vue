@@ -1,11 +1,11 @@
 <template>
-  <div class="divide-y">
-    <div class="flex mb-2">
+  <div>
+    <div class="flex border-b pb-2">
       <t-button @click="closeDetails" :disabled="!gameExists" icon="x">Close</t-button>
       <t-button @click="cloneGame" :disabled="!gameExists" icon="duplicate" class="mx-2">Clone</t-button>
       <t-button @click="deleteGame" :disabled="!gameExists" variant="danger" icon="trash">Delete</t-button>
       <div class="flex-grow"></div>
-      <t-button variant="success">Create new</t-button>
+      <t-button @click="createNewGame" variant="success">Create new</t-button>
     </div>
     <empty-game-panel v-if="!gameExists"></empty-game-panel>
     <div v-if="gameExists" class="grid grid-rows-2 gap-3">
@@ -27,7 +27,7 @@
             <div class="flex-grow"></div>
             <div class="flex">
               <div class="flex-grow"></div>
-              <t-button icon="heart" class="mx-1">Favorite</t-button>
+              <t-button @click="editGame" icon="pencil" class="mx-1">Edit</t-button>
               <t-button icon="play" class="mx-1" variant="success">Play</t-button>
             </div>
           </div>
@@ -65,6 +65,7 @@ import EmptyCommentPanel from './EmptyCommentPanel.vue';
 import TAlert from '../General/TAlert.vue';
 import DeleteGameDialog from '../MyGames/DeleteGameDialog.vue';
 import CloneGameDialog from '../MyGames/CloneGameDialog.vue';
+import httpManager from '../../utils/httpManager';
 
 export default {
   name: 'GameDetails',
@@ -109,6 +110,15 @@ export default {
     },
   },
   methods: {
+    createNewGame() {
+      httpManager.post(`${process.env.VUE_APP_API_URL}/games`).then((response) => {
+        this.$store.commit('setGame', response.data);
+        this.$router.push(`/games/${response.data.id}/edit`);
+      });
+    },
+    editGame() {
+      this.$router.push(`/games/${this.game.id}/edit`);
+    },
     closeDetails() {
       this.game = {};
     },

@@ -29,7 +29,7 @@
         </button>
       </div>
     </div>
-    <t-sidebar position="left" v-model="sidebar"></t-sidebar>
+    <game-details-sidebar v-model="game" />
     <portal to="dialog">
       <step-details-dialog @save="saveStep" :step="game.selectedStep" v-model="dialogs.step_details"/>
     </portal>
@@ -39,39 +39,60 @@
 <script>
 import StepDetailsDialog from '../components/NewGame/StepDetailsDialog.vue';
 import Canvas from '../canvas/canvas';
-import TSidebar from '../components/General/TSidebar.vue';
+import GameDetailsSidebar from '../components/NewGame/GameDetailsSidebar.vue';
+import httpManager from '../utils/httpManager';
 
 export default {
-  name: 'CreateNewGame',
-  components: { TSidebar, StepDetailsDialog },
+  name: 'EditGame',
+  components: { GameDetailsSidebar, StepDetailsDialog },
   data() {
     return {
       canvas: new Canvas(),
+      sidebar: false,
       dialogs: {
         step_details: false,
       },
-      sidebar: false,
       game: {
+        title: '',
+        description: '',
+        language: null,
+        category: null,
+        public: false,
+        cover_art: null,
         steps: this.$store.getters.getSteps,
         selectedStep: null,
       },
     };
   },
-  computed: {
-    selectedNode() {
-      return this.canvas.selectedNode;
-    },
-    currentMode() { // 'create' || 'edit'
-      return this.canvas.currentMode;
+  watch: {
+    game: {
+      handler() {
+        this.saveGameFirebase();
+      },
+      deep: true,
     },
   },
   mounted() {
+    this.loadGame();
     this.canvas.init();
     // Save canvas object to store to use its functions everywhere
     this.$store.state.canvas = this.canvas;
     this.registerListeners();
   },
   methods: {
+    loadGame() {
+      const game = this.$store.getters.getGame;
+      if (Object.keys(game).length !== 0) {
+        this.game = game;
+      } else {
+        this.$store.dispatch('loadGameData', this.$route.params.id).then(() => {
+          this.game = this.$store.getters.getGame;
+        });
+      }
+    },
+    saveGameFirebase() {
+      httpManager.put(`${process.env.VUE_APP_API_URL}/games/${this.game.id}`);
+    },
     registerListeners() {
       // Show dialog after double-clicking node
       this.canvas.vue.$on('editNode', (node) => {
@@ -143,8 +164,7 @@ export default {
     loadCanvas() {
       // parse the data into the canvas
       const json = localStorage.getItem('canvas');
-      const game = localStorage.getItem('game');
-      this.game = game;
+      this.game = localStorage.getItem('game');
       this.canvas.canvas.loadFromJSON(json);
 
       // re-render the canvas

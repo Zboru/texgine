@@ -2,7 +2,7 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import firebase from 'firebase';
 import Dashboard from '../views/Dashboard.vue';
-import CreateNewGame from '../views/CreateNewGame.vue';
+import EditGame from '../views/EditGame.vue';
 import Browse from '../views/Browse.vue';
 import Login from '../views/Login.vue';
 import NotFound from '../views/NotFound.vue';
@@ -54,9 +54,9 @@ const routes = [
     },
   },
   {
-    path: '/create',
-    name: 'CreateNewGame',
-    component: CreateNewGame,
+    path: '/games/:id/edit',
+    name: 'EditGame',
+    component: EditGame,
     meta: {
       requiresAuth: true,
     },

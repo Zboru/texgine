@@ -72,7 +72,7 @@ export default {
   methods: {
     setGame(game) {
       this.selectedGame = game;
-      this.$forceUpdate();
+      this.$store.commit('setGame', game);
     },
     refreshGames(games) {
       this.games = games;

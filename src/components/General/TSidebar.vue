@@ -2,7 +2,7 @@
   <div>
     <t-overlay @click="show = false" :state="show"></t-overlay>
     <div style="z-index: 2" :class="sidebarClass" class="absolute top-0 flex items-center transition">
-      <div class="bg-white w-80 h-screen shadow">
+      <div class="bg-white w-80 h-screen shadow p-4">
         <slot></slot>
       </div>
       <div @click="show = !show" :class="buttonClasses" class="bg-white h-12 flex items-center cursor-pointer border-b-2 border-t-2 border-gray-400">
