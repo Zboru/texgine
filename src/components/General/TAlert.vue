@@ -55,13 +55,13 @@ export default {
     icon() {
       switch (this.variant) {
         case 'warning':
-          return 'exclamation';
+          return 'heroicons-outline:exclamation';
         case 'success':
-          return 'badge-check';
+          return 'heroicons-outline:badge-check';
         case 'danger':
-          return 'x-circle';
+          return 'heroicons-outline:x-circle';
         default:
-          return 'star';
+          return 'heroicons-outline:star';
       }
     },
     border() {

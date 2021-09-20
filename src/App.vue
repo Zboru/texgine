@@ -9,11 +9,11 @@
 </template>
 
 <script>
-import Navigation from './components/Layout/Navigation.vue';
-import Preloader from './components/Layout/Preloader.vue';
-
+import Navigation from "./components/Layout/Navigation.vue";
+import Preloader from "./components/Layout/Preloader.vue";
 export default {
-  components: { Preloader, Navigation },
+  name: "App",
+  components: {Preloader, Navigation},
   beforeCreate() {
     this.$store.dispatch('loadUserData');
   },

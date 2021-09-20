@@ -2,25 +2,15 @@
 
 body {
     font-family: 'Rubik', sans-serif;
-}
-
-nav {
-    font-weight: 500;
-}
-.navbar-brand {
-    font-size: 1.5em;
-}
-
-.lower-canvas {
-    @apply rounded-2xl;
-}
-
-body {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     height: 100vh;
     @apply bg-gray-200
+}
+
+.lower-canvas {
+    @apply rounded-2xl;
 }
 
 #app {

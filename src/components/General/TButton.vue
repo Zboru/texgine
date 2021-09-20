@@ -1,11 +1,11 @@
 <template>
   <button @click="onClick" class="t-button" :disabled="disabled" :class="buttonClasses">
     <template v-if="!loading">
-      <t-icon class="mr-2" v-if="icon" :icon="icon"></t-icon>
+      <t-icon class="text-2xl mr-2" v-if="icon" :icon="icon"></t-icon>
       <slot></slot>
     </template>
     <template v-else>
-      <t-icon class="animate-spin-slow" icon="cog"></t-icon>
+      <t-icon class="animate-spin-slow" icon="heroicons-outline:cog"></t-icon>
     </template>
   </button>
 </template>

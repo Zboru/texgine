@@ -1,8 +1,9 @@
 import axios from 'axios';
-import { app } from '../db';
+import {getAuth} from "firebase/auth";
 
 async function getConfig() {
-  const idToken = await app.auth().currentUser.getIdToken();
+  const auth = getAuth();
+  const idToken = await auth.currentUser.getIdToken();
   return {
     headers: {
       Authorization: `Bearer ${idToken}`,

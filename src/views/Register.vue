@@ -51,13 +51,10 @@
 </template>
 
 <script>
-import firebase from 'firebase';
+import 'firebase/app';
 import axios from 'axios';
 import { app } from '../db';
 import TTextField from '../components/General/TTextField.vue';
-import FacebookIcon from '../components/Icons/FacebookIcon.vue';
-import GoogleIcon from '../components/Icons/GoogleIcon.vue';
-import GithubIcon from '../components/Icons/GithubIcon.vue';
 import TButton from '../components/General/TButton.vue';
 import TDivider from '../components/General/TDivider.vue';
 import TAlert from '../components/General/TAlert.vue';
@@ -68,9 +65,6 @@ export default {
     TAlert,
     TDivider,
     TButton,
-    GithubIcon,
-    GoogleIcon,
-    FacebookIcon,
     TTextField,
   },
   data() {

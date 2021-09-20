@@ -1,47 +1,20 @@
 <template>
-  <div class="container mx-auto">
-    <t-button class="btn" @click="auth">Auth</t-button>
-    <t-button class="btn" @click="apiVer" variant="primary">Button</t-button>
-    <t-button class="btn" variant="success">Button</t-button>
-    <t-button class="btn" variant="danger">Button</t-button>
-    <t-button class="btn" disabled>Button</t-button>
-  </div>
+  <t-container class="flex">
+    <create-new-game />
+    <recently-edited />
+    <newest-public-games />
+  </t-container>
 </template>
 
 <script>
-import axios from 'axios';
-import TButton from '../components/General/TButton.vue';
-import httpManager from '../utils/httpManager';
-
+import TButton from "../components/General/TButton.vue";
+import TContainer from "../components/General/TContainer.vue";
+import RecentlyEdited from "../components/Dashboard/RecentlyEdited.vue";
+import NewestPublicGames from "../components/Dashboard/NewestPublicGames.vue";
+import CreateNewGame from "../components/Dashboard/CreateNewGame.vue";
 export default {
   name: 'Dashboard',
-  components: { TButton },
-  methods: {
-    auth() {
-      httpManager.get('http://localhost:1337/api/')
-        .then((res) => {
-          console.log(res.data);
-        });
-    },
-    apiVer() {
-      axios.get('http://localhost:1337/api/', {
-        headers: {
-          Authorization: `Bearer ${window.localStorage.getItem('token')}`,
-        },
-      })
-        .then((res) => {
-          console.log(res);
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-    },
-  },
+  components: {CreateNewGame, NewestPublicGames, RecentlyEdited, TContainer, TButton},
 };
 </script>
 
-<style scoped>
-.container .btn {
-  @apply mx-2 mt-2;
-}
-</style>

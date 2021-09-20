@@ -8,7 +8,7 @@
           <img v-if="userAvatar.url" class="h-8 w-8 border rounded-full"
                :src="userAvatar.url"
                alt="">
-          <t-icon icon="question-mark-circle" v-else class="text-gray-400 border rounded-full"></t-icon>
+          <t-icon icon="mdi:dots-horizontal-circle-outline" v-else class="text-gray-400 rounded-full text-xl"></t-icon>
       </button>
     </div>
     <div @mousedown.prevent="1"
@@ -41,7 +41,8 @@
 </template>
 
 <script>
-import firebase from 'firebase';
+import {auth} from '../../db'
+import {signOut} from 'firebase/auth';
 import TSkeleton from '../General/TSkeleton.vue';
 import TIcon from '../General/TIcon.vue';
 
@@ -78,8 +79,7 @@ export default {
       });
     },
     logout() {
-      firebase.auth()
-        .signOut()
+      signOut(auth)
         .then(() => {
           this.$router.replace({
             name: 'Login',

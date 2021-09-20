@@ -1,24 +1,20 @@
 import Vue from 'vue';
-import PortalVue from 'portal-vue';
-import { firestorePlugin } from 'vuefire';
-
-import router from './router';
-import store from './store';
-
-import './assets/tailwind.css';
-import './assets/styles.css';
-
 import App from './App.vue';
-import { app } from './db';
 
-Vue.use(PortalVue);
-Vue.use(firestorePlugin);
+import PortalVue from 'portal-vue'
+Vue.use(PortalVue)
 
-Vue.config.productionTip = false;
+import store from "./stores";
+import router from './router';
+
+import '@purge-icons/generated'
+
+import './assets/css/tailwind.css'
+import './assets/css/styles.css'
 
 new Vue({
-  router,
-  app,
-  store,
-  render: (h) => h(App),
+    router,
+    store,
+    render: (h) => h(App),
 }).$mount('#app');
+

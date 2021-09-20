@@ -31,21 +31,21 @@
           </div>
         </div>
         <t-button class="mb-3" :disabled="loggingIn" :loading="loggingIn" @click="submit" variant="success"
-                  icon="lock-closed">Sign in
+                  icon="heroicons-outline:lock-closed">Sign in
         </t-button>
         <t-divider class="my-3">Or continue with</t-divider>
         <div class="grid grid-cols-3 mt-4">
           <div @click="fbLogin"
                class="border rounded-md mr-2 flex justify-center items-center py-2 cursor-pointer hover:bg-gray-300">
-            <facebook-icon class="w-6 h-6 rounded"></facebook-icon>
+            <t-icon icon="logos:facebook" class="text-2xl"></t-icon>
           </div>
           <div @click="googleLogin"
                class="border rounded-md mx-2 flex justify-center items-center py-2 cursor-pointer hover:bg-gray-300">
-            <google-icon class="w-6 h-6"></google-icon>
+            <t-icon icon="grommet-icons:google" class="text-2xl"></t-icon>
           </div>
           <div @click="githubLogin"
                class="border rounded-md ml-2 flex justify-center items-center py-2 cursor-pointer hover:bg-gray-300">
-            <github-icon class="w-6 h-6"></github-icon>
+            <t-icon icon="logos:github-icon" class="text-2xl"></t-icon>
           </div>
         </div>
       </div>
@@ -64,25 +64,31 @@
 </template>
 
 <script>
-import firebase from 'firebase';
 import TTextField from '../components/General/TTextField.vue';
 import TAlert from '../components/General/TAlert.vue';
-import GithubIcon from '../components/Icons/GithubIcon.vue';
-import FacebookIcon from '../components/Icons/FacebookIcon.vue';
-import GoogleIcon from '../components/Icons/GoogleIcon.vue';
-import { app } from '../db';
 import TButton from '../components/General/TButton.vue';
 import TDivider from '../components/General/TDivider.vue';
+import TIcon from "../components/General/TIcon.vue";
+import {auth, db} from '../db';
+import {setDoc, doc, getDoc} from 'firebase/firestore'
+import {
+  signInWithPopup,
+  GithubAuthProvider,
+  GoogleAuthProvider,
+  FacebookAuthProvider,
+  signInWithEmailAndPassword,
+  setPersistence,
+  browserSessionPersistence,
+  browserLocalPersistence
+} from 'firebase/auth'
 
 export default {
   name: 'Login',
   components: {
+    TIcon,
     TDivider,
     TButton,
     TAlert,
-    GoogleIcon,
-    FacebookIcon,
-    GithubIcon,
     TTextField,
   },
   data() {
@@ -103,87 +109,84 @@ export default {
     };
   },
   methods: {
-    async userDataExists(uid) {
-      const doc = await app.firestore().collection('users')
-        .doc(uid)
-        .get();
-      return doc.data() !== undefined;
+    async getUserData(uid) {
+      const docRef = await doc(db, 'users', uid);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        return docSnap.data();
+      }
     },
     login(provider) {
       this.loggingIn = true;
-      firebase.auth()
-        .signInWithPopup(provider)
-        .then(async (data) => {
-          this.alert.success = true;
-          this.loggingIn = false;
-          const dataFlag = await this.userDataExists(data.user.uid);
-          if (dataFlag) {
-            app.firestore().collection('users')
-              .doc(data.user.uid)
-              .get()
-              .then((doc) => {
-                this.$store.commit('setUserData', doc.data());
-                setTimeout(() => {
-                  this.$router.replace({ name: 'Dashboard' });
-                }, 2500);
-              });
-          } else {
-            await app.firestore().collection('users')
-              .doc(data.user.uid)
-              .set({
+      signInWithPopup(auth, provider)
+          .then(async (data) => {
+            this.alert.success = true;
+            this.loggingIn = false;
+            const userData = await this.getUserData(data.user.uid);
+            if (userData) {
+              this.$store.commit('setUserData', userData);
+              setTimeout(() => {
+                this.$router.replace({name: 'Dashboard'});
+              }, 2500);
+            } else {
+              const docRef = doc(db, 'users', data.user.uid);
+              await setDoc(docRef, {
                 uid: data.user.uid,
                 nick: `adventurer-${Math.floor(Math.random() * 9999)}`,
                 email: data.user.email,
-              });
-            setTimeout(() => {
-              this.$router.replace({ name: 'Dashboard' });
-            }, 2500);
-          }
-        }).catch((err) => {
-          this.alert.error = true;
-          this.alert.errorText = err.message;
-        })
-        .finally(() => {
-          this.loggingIn = false;
-        });
+              })
+              setTimeout(() => {
+                this.$router.replace({name: 'Dashboard'});
+              }, 2500);
+            }
+          }).catch((err) => {
+        console.error(err)
+        this.alert.error = true;
+        this.alert.errorText = err.message;
+      }).finally(() => {
+        this.loggingIn = false;
+      });
     },
     githubLogin() {
-      this.login(new firebase.auth.GithubAuthProvider());
+      this.login(new GithubAuthProvider());
     },
     googleLogin() {
-      this.login(new firebase.auth.GoogleAuthProvider());
+      this.login(new GoogleAuthProvider());
     },
     fbLogin() {
-      this.login(new firebase.auth.FacebookAuthProvider());
+      this.login(new FacebookAuthProvider());
     },
-    submit() {
+    async submit() {
       this.loggingIn = true;
-      firebase
-        .auth()
-        .setPersistence(this.form.remember ? firebase.auth.Auth.Persistence.LOCAL : firebase.auth.Auth.Persistence.SESSION)
-        .then(() => {
-          firebase.auth().signInWithEmailAndPassword(this.form.email, this.form.password)
-            .then((data) => {
-              this.alert.success = true;
-              this.loggingIn = false;
-              app.firestore().collection('users')
-                .doc(data.user.uid)
-                .get()
-                .then((doc) => {
-                  this.$store.commit('setUserData', doc.data());
-                  setTimeout(() => {
-                    this.$router.replace({ name: 'Dashboard' });
-                  }, 2500);
-                });
-            })
-            .catch((err) => {
-              this.alert.error = true;
-              this.alert.errorText = err.message;
-            })
-            .finally(() => {
-              this.loggingIn = false;
-            });
-        });
+      await setPersistence(auth, this.form.remember ? browserLocalPersistence : browserSessionPersistence);
+      signInWithEmailAndPassword(auth, this.form.email, this.form.password)
+          .then(async (data) => {
+            this.alert.success = true;
+            this.loggingIn = false;
+            const userData = await this.getUserData(data.user.uid);
+            if (userData) {
+              this.$store.commit('setUserData', userData);
+              setTimeout(() => {
+                this.$router.replace({name: 'Dashboard'});
+              }, 2500);
+            } else {
+              const docRef = doc(db, 'users', data.user.uid);
+              await setDoc(docRef, {
+                uid: data.user.uid,
+                nick: `adventurer-${Math.floor(Math.random() * 9999)}`,
+                email: data.user.email,
+              })
+              setTimeout(() => {
+                this.$router.replace({name: 'Dashboard'});
+              }, 2500);
+            }
+          }).catch((err) => {
+        console.error(err)
+        this.alert.error = true;
+        this.alert.errorText = err.message;
+      }).finally(() => {
+        this.loggingIn = false;
+      });
     },
   },
 };

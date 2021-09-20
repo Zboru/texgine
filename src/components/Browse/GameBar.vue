@@ -9,9 +9,9 @@
       <span class="text-gray-400 font-medium italic">by: {{game.author}}</span>
       <div class="flex-grow"></div>
       <div class="flex">
-        <t-counter dense :value="game.rating" icon="star" />
-        <t-counter class="mx-2" dense :value="game.favorite_count" icon="heart" />
-        <t-counter dense :value="game.play_count" icon="play" />
+        <t-counter dense :value="game.rating" icon="heroicons-outline:star" />
+        <t-counter class="mx-2" dense :value="game.favorite_count" icon="heroicons-outline:heart" />
+        <t-counter dense :value="game.play_count" icon="heroicons-outline:play" />
       </div>
     </div>
   </div>
@@ -19,7 +19,6 @@
 
 <script>
 import TCounter from '../General/TCounter.vue';
-
 export default {
   name: 'GameBar',
   components: { TCounter },

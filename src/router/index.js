@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import firebase from 'firebase';
 import Dashboard from '../views/Dashboard.vue';
 import EditGame from '../views/EditGame.vue';
 import Browse from '../views/Browse.vue';
@@ -9,6 +8,7 @@ import NotFound from '../views/NotFound.vue';
 import Register from '../views/Register.vue';
 import Profile from '../views/Profile.vue';
 import MyGames from '../views/MyGames.vue';
+import {app} from '../db'
 
 Vue.use(VueRouter);
 
@@ -80,13 +80,12 @@ const routes = [
 
 const router = new VueRouter({
   mode: 'history',
-  base: process.env.BASE_URL,
   routes,
 });
 
 router.beforeEach(async (to, from, next) => {
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
-  if (requiresAuth && !await firebase.getCurrentUser()) {
+  if (requiresAuth && !await app.getCurrentUser()) {
     next('/login');
   }
   next();

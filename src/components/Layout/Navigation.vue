@@ -21,7 +21,7 @@
           </div>
           <div class="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
             <div class="flex-shrink-0 flex items-center">
-              <p class="navbar-brand">tex<span class="text-green-500">Gine</span></p>
+              <p class="font-medium text-2xl">tex<span class="text-green-500">Gine</span></p>
             </div>
             <div class="hidden sm:block sm:ml-6">
               <div class="flex space-x-4 navbar-links">
