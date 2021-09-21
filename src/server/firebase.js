@@ -1,6 +1,6 @@
-const firebase = require('firebase');
+const { initializeApp } = require('firebase/app');
 
-const app = firebase.initializeApp({
+const app = initializeApp({
   apiKey: 'AIzaSyAVuPiv73Y-fqVtSbw4jehk4QfrH001-4Y',
   authDomain: 'texgine-87f65.firebaseapp.com',
   projectId: 'texgine-87f65',
