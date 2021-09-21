@@ -72,7 +72,7 @@ export default {
       this.show = false;
     },
     deleteGame() {
-      httpManager.delete(`${process.env.VUE_APP_API_URL}/games/${this.game.id}`).then((response) => {
+      httpManager.delete(`${import.meta.env.VITE_API_URL}/games/${this.game.id}`).then((response) => {
         this.$emit('deleted', response.data.games);
         this.alert = true;
         this.show = false;

@@ -72,7 +72,7 @@ export default {
       this.show = false;
     },
     cloneGame() {
-      httpManager.post(`${process.env.VUE_APP_API_URL}/games/${this.game.id}/clone`).then((response) => {
+      httpManager.post(`${import.meta.env.VITE_API_URL}/games/${this.game.id}/clone`).then((response) => {
         this.$emit('cloned', response.data);
         this.alert = true;
         this.show = false;

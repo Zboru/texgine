@@ -6,6 +6,7 @@ const authMiddleware = require('../middleware/auth');
 
 router.post('/api/games/', authMiddleware, gamesController.createGame);
 router.post('/api/games/:id/clone', authMiddleware, gamesController.cloneGame);
+router.post('/api/games/:id/addComment', authMiddleware, gamesController.addComment);
 router.put('/api/games/:id/', authMiddleware, gamesController.saveGame);
 router.delete('/api/games/:id', authMiddleware, gamesController.deleteGame);
 

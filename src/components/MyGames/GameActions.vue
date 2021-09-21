@@ -4,7 +4,7 @@
     <t-button @click="cloneGame" :disabled="!gameExists" icon="heroicons-outline:duplicate" class="mx-2">Clone</t-button>
     <t-button @click="deleteGame" :disabled="!gameExists" variant="danger" icon="heroicons-outline:trash">Delete</t-button>
     <div class="flex-grow"></div>
-    <t-button @click="createNewGame" variant="success">Create new</t-button>
+    <t-button @click="createNewGame" variant="success" icon="heroicons-outline:plus">Create new</t-button>
     <clone-game-dialog @cloned="afterClone" :game="game" v-model="dialogs.clone"></clone-game-dialog>
     <delete-game-dialog @deleted="afterDelete" :game="game" v-model="dialogs.delete"></delete-game-dialog>
   </div>
@@ -30,10 +30,10 @@ export default {
   computed: {
     game: {
       get() {
-        return this.$store.getters.getGame;
+        return this.$store.getters.getListGame;
       },
       set(value) {
-        this.$store.commit('setGame', value);
+        this.$store.commit('setListGame', value);
       },
     },
     gameExists() {

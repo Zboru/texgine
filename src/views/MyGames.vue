@@ -5,7 +5,7 @@
       <div class="mt-2">
         <empty-game-list v-show="!gamesExist" />
         <template v-if="gamesExist" v-for="(game, index) in games">
-          <game-bar :game="game" @click="setGame(game)" class="mt-1" :key="index"></game-bar>
+          <game-bar :game="game" @click="setListGame(game)" class="mt-1" :key="index"></game-bar>
         </template>
       </div>
     </div>
@@ -36,14 +36,14 @@ export default {
     TContainer,
   },
   created() {
-    httpManager.get('http://localhost:1337/api/user/Zeu2e0b1RBZQCZllHv3VI89okkt2/games')
+    httpManager.get(`${import.meta.env.VITE_API_URL}/user/${this.user.uid}/games`)
       .then((response) => {
         this.games = response.data.games;
       });
   },
   beforeCreate() {
     // Reset game variable in store so there's no unexpected behaviour
-    this.$store.commit('setGame', {});
+    this.$store.commit('setListGame', {});
   },
   data() {
     return {
@@ -52,8 +52,8 @@ export default {
     };
   },
   methods: {
-    setGame(game) {
-      this.$store.commit('setGame', game);
+    setListGame(game) {
+      this.$store.commit('setListGame', game);
     },
     refreshGames(games) {
       this.games = games;
@@ -64,6 +64,9 @@ export default {
     },
   },
   computed: {
+    user() {
+      return this.$store.getters.getUser;
+    },
     gamesExist() {
       return Object.keys(this.games).length > 0
     }

@@ -34,7 +34,7 @@ export default {
   },
   beforeCreate() {
     // Reset game variable in store so there's no unexpected behaviour
-    this.$store.commit('setGame', {});
+    this.$store.commit('setListGame', {});
   },
 };
 </script>

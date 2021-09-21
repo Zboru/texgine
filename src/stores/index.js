@@ -1,12 +1,13 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import {app, auth, db} from "../db";
+import {app, db} from "../db";
 import {doc, getDoc} from "firebase/firestore";
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
     state: {
+        listGame: {},
         game: {},
         steps: [],
         selectedStep: null,
@@ -16,6 +17,7 @@ export default new Vuex.Store({
     },
     getters: {
         getUser: (state) => state.user,
+        getListGame: (state) => state.listGame,
         getGame: (state) => state.game,
         getSteps: (state) => state.steps,
         getCanvas: (state) => state.canvas,
@@ -28,6 +30,10 @@ export default new Vuex.Store({
         setGame: (state, payload) => {
             localStorage.setItem('game', payload);
             state.game = {...payload};
+        },
+        setListGame: (state, payload) => {
+            localStorage.setItem('listGame', payload);
+            state.listGame = {...payload};
         },
         addStep: (state, payload) => {
             state.steps.push(payload);
