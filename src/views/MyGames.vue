@@ -1,14 +1,15 @@
 <template>
   <t-container class="grid grid-cols-2 h-3/4 divide-x">
-    <div class="px-3">
-      <game-list-header />
+    <div class="px-2">
+      <my-games-header />
       <div class="mt-2">
-        <template v-for="(game, index) in games">
+        <empty-game-list v-show="!gamesExist" />
+        <template v-if="gamesExist" v-for="(game, index) in games">
           <game-bar :game="game" @click="setGame(game)" class="mt-1" :key="index"></game-bar>
         </template>
       </div>
     </div>
-    <div v-show="false" class="flex flex-col px-3">
+    <div class="flex flex-col px-2">
       <game-actions @deleted="refreshGames" @cloned="addGame"></game-actions>
       <game-details class="flex-grow"></game-details>
     </div>
@@ -21,12 +22,14 @@ import GameBar from '../components/Browse/GameBar.vue';
 import GameDetails from '../components/Browse/GameDetails.vue';
 import httpManager from '../utils/httpManager';
 import GameActions from '../components/MyGames/GameActions.vue';
-import GameListHeader from '../components/MyGames/GameListHeader.vue';
+import MyGamesHeader from '../components/MyGames/MyGamesHeader.vue';
+import EmptyGameList from '../components/MyGames/EmptyGameList.vue';
 
 export default {
   name: 'MyGames',
   components: {
-    GameListHeader,
+    EmptyGameList,
+    MyGamesHeader,
     GameActions,
     GameDetails,
     GameBar,
@@ -45,8 +48,7 @@ export default {
   data() {
     return {
       sortBy: null,
-      games: [],
-
+      games: {},
     };
   },
   methods: {
@@ -61,5 +63,10 @@ export default {
       this.$set(this.games, game.id, game);
     },
   },
+  computed: {
+    gamesExist() {
+      return Object.keys(this.games).length > 0
+    }
+  }
 };
 </script>

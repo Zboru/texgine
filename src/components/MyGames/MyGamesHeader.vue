@@ -20,7 +20,7 @@ import TTextField from '../General/TTextField.vue';
 import TSelect from '../General/TSelect.vue';
 
 export default {
-  name: 'GameListHeader',
+  name: 'MyGamesHeader',
   components: {
     TTextField,
     TSelect,

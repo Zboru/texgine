@@ -4,7 +4,7 @@
       <span class="text-xs select-none text-gray-500">{{ label }}</span>
     </label>
     <div class="relative">
-      <div class="absolute bg-white text-gray-300 pointer-events-none w-6 h-6 absolute top-2 right-2">
+      <div class="absolute bg-white text-gray-300 pointer-events-none absolute top-2.5 right-2">
         <slot name="icon"></slot>
       </div>
       <input v-if="lazy" :type="type"

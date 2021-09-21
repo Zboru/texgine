@@ -1,4 +1,4 @@
-import GameListHeader from '../../components/MyGames/GameListHeader.vue';
+import GameListHeader from '../../components/MyGames/MyGamesHeader.vue';
 import '../../assets/tailwind.css';
 
 export default {

@@ -2,23 +2,20 @@
   <div class="flex border-b pb-2">
     <t-button @click="closeDetails" :disabled="!gameExists" icon="heroicons-outline:x">Close</t-button>
     <t-button @click="cloneGame" :disabled="!gameExists" icon="heroicons-outline:duplicate" class="mx-2">Clone</t-button>
-    <t-button @click="deleteGame" :disabled="!gameExists" variant="danger" icon="heroicons-outline:trash">Delete</t-button>
     <div class="flex-grow"></div>
     <t-button @click="createNewGame" variant="success">Create new</t-button>
     <clone-game-dialog @cloned="afterClone" :game="game" v-model="dialogs.clone"></clone-game-dialog>
-    <delete-game-dialog @deleted="afterDelete" :game="game" v-model="dialogs.delete"></delete-game-dialog>
   </div>
 </template>
 
 <script>
 import TButton from '../General/TButton.vue';
 import httpManager from '../../utils/httpManager';
-import CloneGameDialog from './CloneGameDialog.vue';
-import DeleteGameDialog from './DeleteGameDialog.vue';
+import CloneGameDialog from '../MyGames/CloneGameDialog.vue';
 
 export default {
   name: 'GameActions',
-  components: { DeleteGameDialog, CloneGameDialog, TButton },
+  components: { CloneGameDialog, TButton },
   data() {
     return {
       dialogs: {
