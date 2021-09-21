@@ -1,4 +1,5 @@
 const { initializeApp } = require('firebase/app');
+const { getFirestore } = require('firebase/firestore');
 
 const app = initializeApp({
   apiKey: 'AIzaSyAVuPiv73Y-fqVtSbw4jehk4QfrH001-4Y',
@@ -10,4 +11,6 @@ const app = initializeApp({
   measurementId: 'G-778EX2D662',
 });
 
-module.exports = app;
+const db = getFirestore(app);
+
+module.exports = { app, db };

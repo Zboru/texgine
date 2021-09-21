@@ -1,11 +1,11 @@
-// const admin = require('../firebase-admin');
-const app = require('../firebase');
+const { app, db } = require('../firebase');
+const {doc, getDoc, updateDoc} = require('firebase/firestore');
 
 const getGames = async function (userId) {
   try {
-    const doc = app.firestore().collection('users').doc(userId);
-    const user = await doc.get();
-    return user.data();
+    const userRef = await doc(db, 'users', userId);
+    const userSnap = await getDoc(userRef);
+    return userSnap.data();
   } catch (err) {
     console.log(err);
     return err;
@@ -14,9 +14,10 @@ const getGames = async function (userId) {
 
 const setUser = async function (userId, data) {
   try {
-    const doc = app.firestore().collection('users').doc(userId);
-    const user = await doc.update(data);
-    return user;
+    const userRef = await doc(db, 'users', userId);
+    const userSnap = await getDoc(userRef);
+    await updateDoc(userRef, data);
+    return userSnap.data();
   } catch (err) {
     console.log(err);
     return err;

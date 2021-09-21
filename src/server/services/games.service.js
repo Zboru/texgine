@@ -1,4 +1,5 @@
-const app = require('../firebase');
+const { app, db } = require('../firebase');
+const {doc, getDoc, setDoc} = require('firebase/firestore');
 
 function generateGameId() {
   return Math.random().toString(36).replace(/[^a-z0-9]+/g, '');
@@ -6,8 +7,9 @@ function generateGameId() {
 
 const createGame = async function (userId) {
   try {
-    const userRef = await app.firestore().collection('users').doc(userId);
-    const userData = (await userRef.get()).data();
+    const userRef = await doc(db, 'users', userId);
+    const userSnap = await getDoc(userRef);
+    const userData = userSnap.data();
 
     const gameId = generateGameId();
 
@@ -25,7 +27,7 @@ const createGame = async function (userId) {
     };
 
     userData.games[gameId] = game;
-    await userRef.set(userData);
+    await setDoc(userRef, userData);
 
     return game;
   } catch (err) {
@@ -36,8 +38,9 @@ const createGame = async function (userId) {
 
 const cloneGame = async function (userId, gameId) {
   try {
-    const userRef = await app.firestore().collection('users').doc(userId);
-    const userData = (await userRef.get()).data();
+    const userRef = await doc(db, 'users', userId);
+    const userSnap = await getDoc(userRef);
+    const userData = userSnap.data();
     const game = userData.games[gameId];
 
     // Generate new game id
@@ -64,8 +67,9 @@ const cloneGame = async function (userId, gameId) {
 
 const deleteGame = async function (userId, gameId) {
   try {
-    const userRef = app.firestore().collection('users').doc(userId);
-    const userData = (await userRef.get()).data();
+    const userRef = await doc(db, 'users', userId);
+    const userSnap = await getDoc(userRef);
+    const userData = userSnap.data();
     const games = userData.games;
     delete games[gameId];
     await userRef.set(userData);
@@ -78,11 +82,12 @@ const deleteGame = async function (userId, gameId) {
 
 const saveGame = async function (userId, gameId, data) {
   try {
-    const userRef = app.firestore().collection('users').doc(userId);
-    const userData = (await userRef.get()).data();
+    const userRef = await doc(db, 'users', userId);
+    const userSnap = await getDoc(userRef);
+    const userData = userSnap.data();
 
     userData.games[gameId] = data;
-    await userRef.set(userData);
+    await setDoc(userRef, userData);
 
     return userData;
   } catch (err) {

@@ -52,7 +52,7 @@ export default new Vuex.Store({
         },
         async loadGameData({state, commit}, gameId) {
             if (state.game && Object.keys(state.game).length === 0 && state.game.constructor === Object) {
-                const docRef = doc(db, 'users', user.uid);
+                const docRef = doc(db, 'users', state.user.uid);
                 const docSnap = await getDoc(docRef);
                 const userData = docSnap.data();
                 const game = userData.games[gameId];
