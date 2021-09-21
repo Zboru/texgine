@@ -1,9 +1,9 @@
 <template>
-  <t-container class="flex">
+  <div class="container mt-2 mx-auto flex justify-center">
     <create-new-game />
-    <recently-edited />
+    <recently-edited class="mx-4" />
     <newest-public-games />
-  </t-container>
+  </div>
 </template>
 
 <script>

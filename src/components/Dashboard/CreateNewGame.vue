@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="bg-white p-2 rounded-lg shadow-md">
     <p class="text-2xl font-medium mb-2">Create new game</p>
     <div class="flex flex-col px-12 p-5 border-2 border-dashed">
       <p class="text-center mb-2 text-gray-400 italic">What are you waiting for? <br>Go create a new adventure</p>
