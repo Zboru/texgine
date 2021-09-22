@@ -24,9 +24,8 @@ app.use(history({
 app.use(staticFileMiddleware);
 
 // listen on the port
-const port = 1337;
-app.listen(port);
-console.log('Listening at port', port);
+app.listen(process.env.PORT || 1337);
+console.log('Listening at port', process.env.PORT || 1337);
 
 app.all('*', (_req, res) => {
   try {
