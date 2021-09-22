@@ -68,9 +68,9 @@ import TTextField from '../components/General/TTextField.vue';
 import TAlert from '../components/General/TAlert.vue';
 import TButton from '../components/General/TButton.vue';
 import TDivider from '../components/General/TDivider.vue';
-import TIcon from "../components/General/TIcon.vue";
-import {auth, db} from '../db';
-import {setDoc, doc, getDoc} from 'firebase/firestore'
+import TIcon from '../components/General/TIcon.vue';
+import { auth, db } from '../db';
+import { setDoc, doc, getDoc } from 'firebase/firestore';
 import {
   signInWithPopup,
   GithubAuthProvider,
@@ -80,7 +80,7 @@ import {
   setPersistence,
   browserSessionPersistence,
   browserLocalPersistence
-} from 'firebase/auth'
+} from 'firebase/auth';
 
 export default {
   name: 'Login',
@@ -116,6 +116,23 @@ export default {
         return docSnap.data();
       }
     },
+    async setUserBasicData(data) {
+      const docRef = doc(db, 'users', data.user.uid);
+      const avatarSeed = Math.random()
+          .toString(36)
+          .replace(/[^a-z0-9]+/g, '');
+      await setDoc(docRef, {
+        uid: data.user.uid,
+        nick: `adventurer-${Math.floor(Math.random() * 9999)}`,
+        email: data.user.email,
+        avatar: {
+          seed: avatarSeed,
+          service: 'open-peeps',
+          url: `https://avatars.dicebear.com/api/open-peeps/${avatarSeed}.svg`
+        },
+        games: {}
+      });
+    },
     login(provider) {
       this.loggingIn = true;
       signInWithPopup(auth, provider)
@@ -126,26 +143,23 @@ export default {
             if (userData) {
               this.$store.commit('setUserData', userData);
               setTimeout(() => {
-                this.$router.replace({name: 'Dashboard'});
+                this.$router.replace({ name: 'Dashboard' });
               }, 2500);
             } else {
-              const docRef = doc(db, 'users', data.user.uid);
-              await setDoc(docRef, {
-                uid: data.user.uid,
-                nick: `adventurer-${Math.floor(Math.random() * 9999)}`,
-                email: data.user.email,
-              })
+              await this.setUserBasicData(data.user.uid);
               setTimeout(() => {
-                this.$router.replace({name: 'Dashboard'});
+                this.$router.replace({ name: 'Dashboard' });
               }, 2500);
             }
-          }).catch((err) => {
-        console.error(err)
-        this.alert.error = true;
-        this.alert.errorText = err.message;
-      }).finally(() => {
-        this.loggingIn = false;
-      });
+          })
+          .catch((err) => {
+            console.error(err);
+            this.alert.error = true;
+            this.alert.errorText = err.message;
+          })
+          .finally(() => {
+            this.loggingIn = false;
+          });
     },
     githubLogin() {
       this.login(new GithubAuthProvider());
@@ -164,29 +178,19 @@ export default {
             this.alert.success = true;
             this.loggingIn = false;
             const userData = await this.getUserData(data.user.uid);
-            if (userData) {
-              this.$store.commit('setUserData', userData);
-              setTimeout(() => {
-                this.$router.replace({name: 'Dashboard'});
-              }, 2500);
-            } else {
-              const docRef = doc(db, 'users', data.user.uid);
-              await setDoc(docRef, {
-                uid: data.user.uid,
-                nick: `adventurer-${Math.floor(Math.random() * 9999)}`,
-                email: data.user.email,
-              })
-              setTimeout(() => {
-                this.$router.replace({name: 'Dashboard'});
-              }, 2500);
-            }
-          }).catch((err) => {
-        console.error(err)
-        this.alert.error = true;
-        this.alert.errorText = err.message;
-      }).finally(() => {
-        this.loggingIn = false;
-      });
+            this.$store.commit('setUserData', userData);
+            setTimeout(() => {
+              this.$router.replace({ name: 'Dashboard' });
+            }, 2500);
+          })
+          .catch((err) => {
+            console.error(err);
+            this.alert.error = true;
+            this.alert.errorText = err.message;
+          })
+          .finally(() => {
+            this.loggingIn = false;
+          });
     },
   },
 };

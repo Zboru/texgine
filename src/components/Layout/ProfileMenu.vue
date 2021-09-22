@@ -81,6 +81,7 @@ export default {
     logout() {
       signOut(auth)
         .then(() => {
+          localStorage.removeItem('uid');
           this.$router.replace({
             name: 'Login',
           });

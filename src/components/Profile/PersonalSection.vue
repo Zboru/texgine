@@ -174,6 +174,7 @@ export default {
   methods: {
     save() {
       this.loading.save = true;
+      this.user.avatar.url = this.avatarURL;
       httpManager.post(`http://localhost:1337/api/user/${this.user.uid}`, this.user)
         .then((res) => {
           console.log(res.data);
