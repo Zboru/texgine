@@ -81,6 +81,7 @@ import {
   browserSessionPersistence,
   browserLocalPersistence
 } from 'firebase/auth';
+import login from '../utils/providerLogin';
 
 export default {
   name: 'Login',
@@ -109,66 +110,14 @@ export default {
     };
   },
   methods: {
-    async getUserData(uid) {
-      const docRef = await doc(db, 'users', uid);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        return docSnap.data();
-      }
-    },
-    async setUserBasicData(data) {
-      const docRef = doc(db, 'users', data.user.uid);
-      const avatarSeed = Math.random()
-          .toString(36)
-          .replace(/[^a-z0-9]+/g, '');
-      await setDoc(docRef, {
-        uid: data.user.uid,
-        nick: `adventurer-${Math.floor(Math.random() * 9999)}`,
-        email: data.user.email,
-        avatar: {
-          seed: avatarSeed,
-          service: 'open-peeps',
-          url: `https://avatars.dicebear.com/api/open-peeps/${avatarSeed}.svg`
-        },
-        games: {}
-      });
-    },
-    login(provider) {
-      this.loggingIn = true;
-      signInWithPopup(auth, provider)
-          .then(async (data) => {
-            this.alert.success = true;
-            this.loggingIn = false;
-            const userData = await this.getUserData(data.user.uid);
-            if (userData) {
-              this.$store.commit('setUserData', userData);
-              setTimeout(() => {
-                this.$router.replace({ name: 'Dashboard' });
-              }, 2500);
-            } else {
-              await this.setUserBasicData(data.user.uid);
-              setTimeout(() => {
-                this.$router.replace({ name: 'Dashboard' });
-              }, 2500);
-            }
-          })
-          .catch((err) => {
-            console.error(err);
-            this.alert.error = true;
-            this.alert.errorText = err.message;
-          })
-          .finally(() => {
-            this.loggingIn = false;
-          });
-    },
     githubLogin() {
-      this.login(new GithubAuthProvider());
+      login(this, new GithubAuthProvider(), auth, db);
     },
     googleLogin() {
-      this.login(new GoogleAuthProvider());
+      login(this,new GoogleAuthProvider(), auth, db);
     },
     fbLogin() {
-      this.login(new FacebookAuthProvider());
+      login(this,new FacebookAuthProvider(), auth, db);
     },
     async submit() {
       this.loggingIn = true;
