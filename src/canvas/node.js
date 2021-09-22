@@ -29,7 +29,7 @@ class Node {
       fontFamily: 'Calibri',
       fill: '#000',
     });
-    const group = new fabric.Group([rectangle, text], {
+    return new fabric.Group([rectangle, text], {
       left,
       top,
       id,
@@ -39,8 +39,6 @@ class Node {
       moveCursor: 'move',
       hoverCursor: 'pointer',
     });
-
-    return group;
   }
 
   static setID(node, id) {

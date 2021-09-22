@@ -6,8 +6,8 @@
         <slot></slot>
       </div>
       <div @click="show = !show" :class="buttonClasses" class="bg-white h-12 flex items-center cursor-pointer border-b-2 border-t-2 border-gray-400">
-        <t-icon class="transition" :class="iconClass" v-if="position === 'left'" icon="chevron-right"></t-icon>
-        <t-icon class="transition" :class="iconClass" v-else icon="chevron-left"></t-icon>
+        <t-icon class="transition" :class="iconClass" v-if="position === 'left'" icon="heroicons-outline:chevron-right"></t-icon>
+        <t-icon class="transition" :class="iconClass" v-else icon="heroicons-outline:chevron-left"></t-icon>
       </div>
     </div>
   </div>

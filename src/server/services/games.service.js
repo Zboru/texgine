@@ -17,6 +17,8 @@ const createGame = async function (userId) {
       id: gameId,
       author: userData.nick,
       description: null,
+      steps: {},
+      canvas: {},
       title: 'Untitled',
       play_count: 0,
       favorite_count: 0,

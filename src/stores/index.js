@@ -9,7 +9,6 @@ export default new Vuex.Store({
     state: {
         listGame: {},
         game: {},
-        steps: [],
         selectedStep: null,
         selectedStepIndex: null,
         canvas: null,
@@ -35,12 +34,8 @@ export default new Vuex.Store({
             localStorage.setItem('listGame', payload);
             state.listGame = {...payload};
         },
-        addStep: (state, payload) => {
-            state.steps.push(payload);
-        },
         saveStep: (state, payload) => {
-            const stepIndex = state.steps.findIndex((st) => st.internal_id === payload.internal_id);
-            state.steps[stepIndex] = payload;
+            state.game.steps[payload.internal_id] = payload;
         },
         removeStep: (state, payload) => {
             const stepIndex = state.steps.findIndex((st) => st.id === payload.id);
@@ -51,9 +46,11 @@ export default new Vuex.Store({
         async loadUserData({state, commit}) {
             if (state.user && Object.keys(state.user).length === 0 && state.user.constructor === Object) {
                 const user = await app.getCurrentUser();
-                const docRef = doc(db, 'users', user.uid);
-                const docSnap = await getDoc(docRef);
-                commit('setUserData', docSnap.data());
+                if (user) {
+                    const docRef = doc(db, 'users', user.uid);
+                    const docSnap = await getDoc(docRef);
+                    commit('setUserData', docSnap.data());
+                }
             }
         },
         async loadGameData({state, commit}, gameId) {

@@ -1,8 +1,9 @@
 <template>
   <t-sidebar position="left" v-model="sidebar">
+    <p class="text-2xl font-medium">Game details</p>
     <t-text-field lazy v-model="game.title" label="Title" placeholder="Adventures of..."></t-text-field>
     <t-text-area lazy v-model="game.description" label="Description" placeholder="Once upon a time..."></t-text-area>
-    <t-select placeholder="Select language" label="Language"></t-select>
+    <t-select v-model="game.language" :items="languages" placeholder="Select language" label="Language"></t-select>
     <t-select v-model="game.category" :items="categories" placeholder="Select category" label="Category"></t-select>
     <t-checkbox v-model="game.public" label="Game is visible to everyone" class="mt-2"></t-checkbox>
     <t-file-input v-model="game.cover_art" label="Cover art (max. 10mb)" input-label="Upload an image"></t-file-input>
@@ -48,12 +49,16 @@ export default {
         { text: 'Mystery', value: 'mystery' },
         { text: 'Puzzle', value: 'puzzle' },
         { text: 'RPG', value: 'rpg' },
-        { text: 'Sci-Fi', value: 'scf-fi' },
+        { text: 'Sci-Fi', value: 'sci-fi' },
         { text: 'Seasonal', value: 'seasonal' },
         { text: 'Simulation', value: 'simulation' },
         { text: 'Surreal', value: 'surreal' },
         { text: 'Other', value: 'other' },
       ],
+      languages: [
+        { text: 'English', value: 'english' },
+        { text: 'Polski', value: 'polish' },
+      ]
     };
   },
   computed: {

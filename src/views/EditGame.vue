@@ -31,15 +31,15 @@
     </div>
     <game-details-sidebar v-model="game" />
     <portal to="dialog">
-      <step-details-dialog @save="saveStep" :step="game.selectedStep" v-model="dialogs.step_details"/>
+      <step-details-dialog @save="saveStep" :step="selectedStep" v-model="dialogs.step_details"/>
     </portal>
   </div>
 </template>
 
 <script>
-import StepDetailsDialog from '../components/NewGame/StepDetailsDialog.vue';
+import StepDetailsDialog from '../components/EditGame/StepDetailsDialog.vue';
 import Canvas from '../canvas/canvas';
-import GameDetailsSidebar from '../components/NewGame/GameDetailsSidebar.vue';
+import GameDetailsSidebar from '../components/EditGame/GameDetailsSidebar.vue';
 import httpManager from '../utils/httpManager';
 
 export default {
@@ -52,17 +52,18 @@ export default {
       dialogs: {
         step_details: false,
       },
-      game: {
-        title: '',
-        description: '',
-        language: null,
-        category: null,
-        public: false,
-        cover_art: null,
-        steps: this.$store.getters.getSteps,
-        selectedStep: null,
-      },
+      selectedStep: {},
     };
+  },
+  computed: {
+    game: {
+      get() {
+        return this.$store.getters.getGame;
+      },
+      set(value) {
+        this.$store.commit('setGame', value);
+      }
+    }
   },
   watch: {
     game: {
@@ -73,32 +74,51 @@ export default {
     },
   },
   mounted() {
-    this.loadGame();
     this.canvas.init();
     // Save canvas object to store to use its functions everywhere
     this.$store.state.canvas = this.canvas;
+    this.loadGame();
     this.registerListeners();
   },
   methods: {
+    /*
+      Load game from Vuex or Firebase if there was direct connection
+     */
     loadGame() {
       const game = this.$store.getters.getGame;
       if (Object.keys(game).length !== 0) {
         this.game = game;
+        if (JSON.stringify(this.game.canvas) !== "{}") {
+          this.canvas.canvas.loadFromJSON(this.game.canvas, () => {
+            this.canvas.canvas.renderAll();
+          });
+        }
       } else {
         this.$store.dispatch('loadGameData', this.$route.params.id).then(() => {
           this.game = this.$store.getters.getGame;
+          this.canvas.canvas.loadFromJSON(this.game.canvas, () => {
+            this.canvas.canvas.renderAll();
+          });
         });
       }
     },
+    /*
+      Everytime game properties change, save game in cloud
+     */
     saveGameFirebase() {
       httpManager.put(`${import.meta.env.VITE_API_URL}/games/${this.game.id}`, this.game);
+    },
+    saveCanvas() {
+      const canvasJSON = this.canvas.canvas.toJSON(['internal_id', 'id', 'hasControls', 'hasBorders', 'moveCursor', 'hoverCursor']);
+      canvasJSON.objects = canvasJSON.objects.filter(obj => obj.type !== 'line');
+      this.game.canvas = JSON.stringify(canvasJSON);
+      this.saveGameFirebase();
     },
     registerListeners() {
       // Show dialog after double-clicking node
       this.canvas.vue.$on('editNode', (node) => {
-        const stepIndex = this.game.steps.findIndex((s) => s.id === node.id);
-        this.$store.state.selectedStepIndex = stepIndex;
-        this.game.selectedStep = { ...this.game.steps[stepIndex] };
+        console.log(node);
+        this.selectedStep = { ...this.game.steps[node.internal_id] };
         this.dialogs.step_details = true;
       });
       // Show dialog after placing new node
@@ -112,14 +132,17 @@ export default {
           choices: [],
         };
         // Save it in Vuex store
-        this.$store.commit('addStep', step);
+        this.$store.commit('saveStep', step);
 
         // Select created step
-        const stepIndex = this.game.steps.indexOf(step);
-        this.game.selectedStep = { ...this.game.steps[stepIndex] };
-
+        this.selectedStep = { ...this.game.steps[step.id] };
+        // Save canvas to Firebase
+        this.saveCanvas();
         this.dialogs.step_details = true;
       });
+      this.canvas.vue.$on('nodeMoved', (node) => {
+        this.saveCanvas();
+      })
     },
     createRectangle() {
       this.canvas.createRect(9999, 9999, '#faf', 'placeholder');
@@ -127,11 +150,13 @@ export default {
     },
     saveStep() {
       // Update step in Vuex store
-      this.$store.commit('saveStep', this.game.selectedStep);
+      this.$store.commit('saveStep', this.selectedStep);
       // Change canvas node id
-      this.canvas.setNodeID(this.game.selectedStep.id);
+      this.canvas.setNodeID(this.selectedStep.id);
+      // Save canvas to Firebase
+      this.saveCanvas();
       // Draw connections between steps
-      this.makeConnections();
+      // this.makeConnections();
     },
     makeConnections() {
       const steps = this.$store.getters.getSteps;

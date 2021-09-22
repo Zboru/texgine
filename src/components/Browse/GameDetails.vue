@@ -87,6 +87,7 @@ export default {
   },
   methods: {
     editGame() {
+      this.$store.commit('setGame', this.game);
       this.$router.push(`/games/${this.game.id}/edit`);
     },
   },

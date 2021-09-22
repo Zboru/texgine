@@ -19,7 +19,7 @@ class Canvas {
 
     this.vue = new Vue();
 
-    this.currentMode = null; // 'create' || 'edit'
+    this.canvas = null;
     this.selectedNode = null;
   }
 
@@ -155,13 +155,13 @@ class Canvas {
     if (collisionObject.collision && options.target.type === 'group') {
       this.moveIntersectedObject(options.target, collisionObject.collider);
     }
+    this.vue.$emit('nodeMoved', this.selectedNode);
   }
 
   // Select desired node by double-clicking it
   selectNode(options) {
     if (options.target.type === 'group') {
       this.selectedNode = options.target;
-      this.currentMode = 'edit';
       this.vue.$emit('editNode', this.selectedNode);
     }
   }
@@ -177,9 +177,8 @@ class Canvas {
   }
 
   setNodeID(rectangleID) {
-    console.log(rectangleID);
+    console.debug('Changing node id to:', rectangleID);
     const rect = this.getItem('group', 'id', this.selectedNode.id);
-    console.log(rect);
     rect.id = rectangleID;
     rect.getObjects()[1].set('text', rect.id);
     this.canvas.renderAll();
@@ -210,7 +209,6 @@ class Canvas {
         this.moveIntersectedObject(placeholder, collisionObject.collider);
       }
       this.selectedNode = placeholder;
-      this.currentMode = 'create';
       this.vue.$emit('createNode', this.selectedNode);
     }
     this.isAddingRect = false;
@@ -306,7 +304,8 @@ class Canvas {
     const x = fabric.util.invertTransform(this.canvas.viewportTransform)[4] + (canvas.width / zoom) / 2;
     const y = fabric.util.invertTransform(this.canvas.viewportTransform)[5] + (canvas.height / zoom) / 2;
     canvas.zoomToPoint({
-      x, y,
+      x,
+      y,
     }, 1);
   }
 
