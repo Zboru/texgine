@@ -38,7 +38,7 @@ export default {
   },
   data() {
     return {
-      sidebar: true,
+      sidebar: false,
       categories: [
         { text: 'Adventure', value: 'adventure' },
         { text: 'Romance', value: 'romance' },

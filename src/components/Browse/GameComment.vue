@@ -1,16 +1,40 @@
 <template>
-  <div class="border-2 p-2 mt-1 rounded flex">
-    <img :src="comment.authorAvatar" class="w-12 h-12 border mr-3 select-none" alt="">
-    <div class="flex flex-col text-sm">
-      <p class="text-gray-400 italic font-medium select-none">{{ comment.author }} wrote:</p>
-      <p>{{comment.text}}</p>
+  <div class="border-2 p-2 mt-1 rounded flex flex-col">
+    <div class="flex">
+      <img :src="comment.authorAvatar" class="w-12 h-12 border mr-3 select-none" alt="">
+      <div class="flex flex-col flex-grow text-sm">
+        <p class="text-gray-400 italic font-medium select-none flex justify-between">
+          <span>{{ comment.author }} wrote:</span>
+          <span>{{getDate(comment.created_at)}}</span>
+        </p>
+        <p>{{comment.text}}</p>
+      </div>
+    </div>
+    <div class="flex justify-between">
+      <div class="flex justify-around mt-1 w-12">
+        <t-icon class="cursor-pointer hover:text-green-500" icon="bx:bx-upvote"></t-icon>
+        <t-icon class="cursor-pointer hover:text-red-500" icon="bx:bx-downvote"></t-icon>
+      </div>
+      <div class="flex items-center">
+        <span class="flex items-center">
+          <t-icon class="mx-1 text-green-500" icon="bx:bx-upvote"></t-icon>
+          0
+        </span>
+        <span class="flex items-center">
+          <t-icon class="mx-1 text-red-500" icon="bx:bx-downvote"></t-icon>
+          0
+        </span>
+        <t-icon class="cursor-pointer ml-2" icon="heroicons-outline:dots-vertical"></t-icon>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import TIcon from '../General/TIcon.vue';
 export default {
   name: 'GameComment',
+  components: { TIcon },
   props: {
     comment: {
       type: Object,
@@ -22,5 +46,15 @@ export default {
       return `https://avatars.dicebear.com/api/micah/${seed}.svg`;
     },
   },
+  methods: {
+    getDate(date) {
+      if (typeof date === "object") {
+        const unix = parseInt(date.seconds + '000');
+        return new Date(unix).toLocaleString();
+      } else {
+        return new Date(date).toLocaleString();
+      }
+    }
+  }
 };
 </script>

@@ -58,6 +58,7 @@ export default {
     },
     afterDelete(games) {
       this.$emit('deleted', games);
+      this.$store.commit('setListGame', {});
     },
     afterClone(game) {
       this.$emit('cloned', game);

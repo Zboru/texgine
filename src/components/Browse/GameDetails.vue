@@ -9,9 +9,9 @@
             <p class="font-medium text-2xl">{{ game.title }}</p>
             <p>{{ game.description }}</p>
             <div class="grid grid-cols-2 mt-4">
-              <t-counter icon="heart" text="Favorite count" :value="game.favorite_count"/>
-              <t-counter icon="star" text="Rating" :value="game.rating"/>
-              <t-counter class="mt-2" icon="play" text="Play count" :value="game.play_count"/>
+              <t-counter icon="heroicons-outline:heart" text="Favorite count" :value="game.favorite_count"/>
+              <t-counter icon="heroicons-outline:star" text="Rating" :value="game.rating"/>
+              <t-counter class="mt-2" icon="heroicons-outline:play" text="Play count" :value="game.play_count"/>
             </div>
             <div class="flex-grow"></div>
             <div class="flex">

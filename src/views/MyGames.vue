@@ -61,6 +61,7 @@ export default {
     },
     addGame(game) {
       this.$set(this.games, game.id, game);
+      this.setListGame(game);
     },
   },
   computed: {
