@@ -6,7 +6,7 @@
           <div
               class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-lg sm:mx-0 sm:h-10 sm:w-10"
               :class="iconBackground">
-            <t-icon :icon="icon" :color="iconColor"></t-icon>
+            <t-icon :icon="icon" :class="iconColor"></t-icon>
           </div>
           <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
             <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
@@ -82,11 +82,11 @@ export default {
     icon() {
       switch (this.iconPreset) {
         case 'danger':
-          return 'exclamation';
+          return 'heroicons-outline:exclamation';
         case 'warning':
-          return 'exclamation';
+          return 'heroicons-outline:exclamation';
         case 'info':
-          return 'question-mark-circle';
+          return 'heroicons-outline:question-mark-circle';
         default:
           return 'star';
       }
@@ -94,11 +94,11 @@ export default {
     iconColor() {
       switch (this.iconPreset) {
         case 'danger':
-          return 'text-red-400';
+          return 'text-red-400 text-2xl';
         case 'warning':
-          return 'text-yellow-400';
+          return 'text-yellow-400 text-2xl';
         case 'info':
-          return 'text-blue-400';
+          return 'text-blue-400 text-2xl';
         default:
           return 'star';
       }

@@ -85,9 +85,9 @@ export default {
     },
     iconColors() {
       return {
-        'text-yellow-400': this.variant === 'warning',
-        'text-green-400': this.variant === 'success',
-        'text-red-400': this.variant === 'danger',
+        'text-yellow-400 text-2xl': this.variant === 'warning',
+        'text-green-400 text-2xl': this.variant === 'success',
+        'text-red-400 text-2xl': this.variant === 'danger',
       };
     },
     titleColor() {
