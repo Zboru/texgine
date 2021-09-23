@@ -4,7 +4,10 @@
     <div v-if="gameExists" class="flex flex-col">
       <div>
         <div class="flex my-2">
-          <img src="https://via.placeholder.com/600x400" class="max-w-xs object-cover" alt="game image">
+          <div class="border-2 border-dashed w-56 h-64 flex items-center justify-center">
+            <t-icon icon="heroicons-outline:photograph" class="text-3xl text-gray-400"></t-icon>
+          </div>
+<!--      <img src="https://via.placeholder.com/600x400" class="max-w-xs object-cover" alt="game image">-->
           <div class="mt-4 ml-4 flex-grow flex flex-col">
             <p class="font-medium text-2xl">{{ game.title }}</p>
             <p>{{ game.description }}</p>
@@ -45,10 +48,12 @@ import TCounter from '../General/TCounter.vue';
 import EmptyGamePanel from './EmptyGamePanel.vue';
 import EmptyCommentPanel from './EmptyCommentPanel.vue';
 import AddCommentDialog from '../Shared/Game/AddCommentDialog.vue';
+import TIcon from '../General/TIcon.vue';
 
 export default {
   name: 'GameDetails',
   components: {
+    TIcon,
     AddCommentDialog,
     EmptyCommentPanel,
     EmptyGamePanel,

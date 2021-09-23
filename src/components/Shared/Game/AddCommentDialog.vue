@@ -81,7 +81,7 @@ export default {
           .then(response => {
             this.show = false;
             this.alerts.success = true;
-            this.game.comments.unshift(response.data);
+            this.game.comments[response.data.id] = response.data;
           });
     }
   }

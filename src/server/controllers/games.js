@@ -46,10 +46,22 @@ const addComment = function (req, res) {
     });
 };
 
+const vote = function (req, res) {
+  const gameId = req.params.id;
+  const commentId = req.params.comment_id;
+  const userId = req.authId;
+  const type = req.body.type;
+  gamesService.vote(userId, gameId, commentId, type)
+    .then (response => {
+
+    });
+}
+
 module.exports = {
   createGame,
   cloneGame,
   deleteGame,
   saveGame,
-  addComment
+  addComment,
+  vote
 };

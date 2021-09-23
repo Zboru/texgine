@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div @click="$emit('click')">
     <span class="iconify" :data-icon="icon"></span>
   </div>
 </template>

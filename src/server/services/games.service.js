@@ -1,8 +1,17 @@
-const { app, db } = require('../firebase');
-const {doc, getDoc, setDoc} = require('firebase/firestore');
+const {
+  app,
+  db
+} = require('../firebase');
+const {
+  doc,
+  getDoc,
+  setDoc
+} = require('firebase/firestore');
 
-function generateGameId() {
-  return Math.random().toString(36).replace(/[^a-z0-9]+/g, '');
+function generateId() {
+  return Math.random()
+    .toString(36)
+    .replace(/[^a-z0-9]+/g, '');
 }
 
 const createGame = async function (userId) {
@@ -11,8 +20,7 @@ const createGame = async function (userId) {
     const userSnap = await getDoc(userRef);
     const userData = userSnap.data();
 
-    const gameId = generateGameId();
-
+    const gameId = generateId();
     const game = {
       id: gameId,
       author: userData.nick,
@@ -23,12 +31,16 @@ const createGame = async function (userId) {
       play_count: 0,
       favorite_count: 0,
       rating: 0,
-      comments: [],
+      comments: {},
       created_at: new Date(),
       updated_at: new Date(),
     };
+    // Save game to collection
+    const gameRef = await doc(db, 'games', gameId);
+    await setDoc(gameRef, game);
 
-    userData.games[gameId] = game;
+    // Add game data to user's games collection
+    userData.games[gameId] = gameRef;
     await setDoc(userRef, userData);
 
     return game;
@@ -46,13 +58,13 @@ const cloneGame = async function (userId, gameId) {
     const game = userData.games[gameId];
 
     // Generate new game id
-    const newGameId = generateGameId();
+    const newGameId = generateId();
 
     // Create new game object and override author and its id
     const newGame = {
       ...game,
       author: userData.nick,
-      comments: [],
+      comments: {},
       play_count: 0,
       favorite_count: 0,
       rating: 0,
@@ -104,18 +116,52 @@ const saveGame = async function (userId, gameId, data) {
 
 const addComment = async function (userId, gameId, data) {
   try {
+    const gameRef = await doc(db, 'games', gameId);
+    const gameSnap = await getDoc(gameRef);
+    const gameData = gameSnap.data();
+
+    const userRef = await doc(db, 'users', userId);
+    const userSnap = await getDoc(userRef);
+    const userData = userSnap.data();
+
+    // Create comment object in case it does not exist
+    if (typeof gameData.comments === "undefined") {
+      gameData.comments = {};
+    }
+
+    const commentId = generateId();
+    const comment = {
+      id: commentId,
+      author: userData.nick,
+      authorAvatar: userData.avatar.url,
+      text: data.comment,
+      created_at: new Date(),
+      votes: {}
+    };
+    console.log(gameData,comment);
+    gameData.comments[commentId] = comment;
+    await setDoc(gameRef, gameData);
+
+    userData.games[gameId] = gameData;
+    await setDoc(userRef, userData);
+
+    return comment;
+  } catch (err) {
+    console.error(err);
+    return err;
+  }
+};
+
+const vote = async function (userId, gameId, commentId, type) {
+  try {
     const userRef = await doc(db, 'users', userId);
     const userSnap = await getDoc(userRef);
     const userData = userSnap.data();
 
     const game = userData.games[gameId];
-    const comment = {
-      author: userData.nick,
-      authorAvatar: userData.avatar.url,
-      text: data.comment,
-      created_at: new Date(),
-    }
-    game.comments.push(comment);
+    const comment = game.comments[commentId];
+
+    comment.votes[userId] = type === "upvote" ? 1 : -1
 
     await setDoc(userRef, userData);
     return comment;
@@ -126,5 +172,10 @@ const addComment = async function (userId, gameId, data) {
 };
 
 module.exports = {
-  createGame, cloneGame, deleteGame, saveGame, addComment
+  createGame,
+  cloneGame,
+  deleteGame,
+  saveGame,
+  addComment,
+  vote
 };
