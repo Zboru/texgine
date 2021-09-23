@@ -51,22 +51,17 @@
 </template>
 
 <script>
-import axios from 'axios';
 import TTextField from '../components/General/TTextField.vue';
 import TAlert from '../components/General/TAlert.vue';
 import TButton from '../components/General/TButton.vue';
 import TDivider from '../components/General/TDivider.vue';
 import TIcon from '../components/General/TIcon.vue';
 import { auth, db } from '../db';
-import { setDoc, doc, getDoc } from 'firebase/firestore';
+import { providerLogin, emailRegister } from '../utils/firebaseLogin';
 import {
-  signInWithPopup,
   GithubAuthProvider,
   GoogleAuthProvider,
   FacebookAuthProvider,
-  createUserWithEmailAndPassword,
-  setPersistence,
-  browserSessionPersistence,
 } from 'firebase/auth';
 
 export default {
@@ -96,94 +91,17 @@ export default {
     };
   },
   methods: {
-    async checkNickname() {
-      const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/checkNickname?nick=${this.form.nick}`);
-      return data;
-    },
-    async getUserData(uid) {
-      const docRef = await doc(db, 'users', uid);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        return docSnap.data();
-      }
-    },
-    async setUserBasicData(data) {
-      const docRef = doc(db, 'users', data.user.uid);
-      const avatarSeed = Math.random()
-          .toString(36)
-          .replace(/[^a-z0-9]+/g, '');
-      await setDoc(docRef, {
-        uid: data.user.uid,
-        nick: `adventurer-${Math.floor(Math.random() * 9999)}`,
-        email: data.user.email,
-        avatar: {
-          seed: avatarSeed,
-          service: 'open-peeps',
-          url: `https://avatars.dicebear.com/api/open-peeps/${avatarSeed}.svg`
-        },
-        games: {}
-      });
-    },
-    login(provider) {
-      this.loggingIn = true;
-      signInWithPopup(auth, provider)
-          .then(async (data) => {
-            this.alert.success = true;
-            this.loggingIn = false;
-            const userData = await this.getUserData(data.user.uid);
-            if (userData) {
-              this.$store.commit('setUserData', userData);
-              setTimeout(() => {
-                this.$router.replace({ name: 'Dashboard' });
-              }, 2500);
-            } else {
-              await this.setUserBasicData(data.user.uid)
-              this.$store.commit('setUserData', userData);
-              setTimeout(() => {
-                this.$router.replace({ name: 'Dashboard' });
-              }, 2500);
-            }
-          })
-          .catch((err) => {
-            console.error(err);
-            this.alert.error = true;
-            this.alert.errorText = err.message;
-          })
-          .finally(() => {
-            this.loggingIn = false;
-          });
-    },
     githubLogin() {
-      this.login(new GithubAuthProvider());
+      providerLogin(this, new GithubAuthProvider(), auth, db);
     },
     googleLogin() {
-      this.login(new GoogleAuthProvider());
+      providerLogin(this, new GoogleAuthProvider(), auth, db);
     },
     fbLogin() {
-      this.login(new FacebookAuthProvider());
+      providerLogin(this, new FacebookAuthProvider(), auth, db);
     },
-    async register() {
-      const { invalid } = await this.checkNickname();
-      if (invalid === true) {
-        this.alert.error = true;
-        this.alert.errorText = 'The given nickname is already in use, enter a new one';
-        return false;
-      }
-      await setPersistence(auth, browserSessionPersistence);
-      createUserWithEmailAndPassword(auth, this.form.email, this.form.password)
-          .then(async (data) => {
-            await this.setUserBasicData(data);
-            const userData = await this.getUserData(data.user.uid);
-            this.$store.commit('setUserData', userData);
-            setTimeout(() => {
-              this.$router.replace({ name: 'Dashboard' });
-            }, 2500);
-          })
-          .catch((err) => {
-            console.error(err);
-            this.alert.error = true;
-            this.alert.errorText = err.message;
-          });
+    register() {
+      emailRegister(this, this.form)
     }
   }
 };

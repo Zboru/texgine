@@ -70,18 +70,12 @@ import TButton from '../components/General/TButton.vue';
 import TDivider from '../components/General/TDivider.vue';
 import TIcon from '../components/General/TIcon.vue';
 import { auth, db } from '../db';
-import { setDoc, doc, getDoc } from 'firebase/firestore';
+import { providerLogin, emailLogin } from '../utils/firebaseLogin';
 import {
-  signInWithPopup,
   GithubAuthProvider,
   GoogleAuthProvider,
   FacebookAuthProvider,
-  signInWithEmailAndPassword,
-  setPersistence,
-  browserSessionPersistence,
-  browserLocalPersistence
 } from 'firebase/auth';
-import login from '../utils/providerLogin';
 
 export default {
   name: 'Login',
@@ -111,36 +105,17 @@ export default {
   },
   methods: {
     githubLogin() {
-      login(this, new GithubAuthProvider(), auth, db);
+      providerLogin(this, new GithubAuthProvider(), auth, db);
     },
     googleLogin() {
-      login(this,new GoogleAuthProvider(), auth, db);
+      providerLogin(this, new GoogleAuthProvider(), auth, db);
     },
     fbLogin() {
-      login(this,new FacebookAuthProvider(), auth, db);
+      providerLogin(this, new FacebookAuthProvider(), auth, db);
     },
-    async submit() {
-      this.loggingIn = true;
-      await setPersistence(auth, this.form.remember ? browserLocalPersistence : browserSessionPersistence);
-      signInWithEmailAndPassword(auth, this.form.email, this.form.password)
-          .then(async (data) => {
-            this.alert.success = true;
-            this.loggingIn = false;
-            const userData = await this.getUserData(data.user.uid);
-            this.$store.commit('setUserData', userData);
-            setTimeout(() => {
-              this.$router.replace({ name: 'Dashboard' });
-            }, 2500);
-          })
-          .catch((err) => {
-            console.error(err);
-            this.alert.error = true;
-            this.alert.errorText = err.message;
-          })
-          .finally(() => {
-            this.loggingIn = false;
-          });
-    },
+    submit() {
+      emailLogin(this, this.form.remember, this.form.email, this.form.password)
+    }
   },
 };
 </script>
