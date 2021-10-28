@@ -49,7 +49,10 @@ export default new Vuex.Store({
                 if (user) {
                     const docRef = doc(db, 'users', user.uid);
                     const docSnap = await getDoc(docRef);
-                    commit('setUserData', docSnap.data());
+                    commit('setUserData', {
+                      ...docSnap.data(),
+                      provider:user.providerData[0].providerId
+                    });
                 }
             }
         },

@@ -5,7 +5,7 @@ import {
   signInWithPopup
 } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { auth } from '../db';
+import { auth, db } from '../db';
 import axios from 'axios';
 
 async function getUserData(uid, db) {
@@ -16,14 +16,14 @@ async function getUserData(uid, db) {
   }
 }
 
-async function setUserBasicData(db, data) {
+async function setUserBasicData(db, data, nick = null) {
   const docRef = doc(db, 'users', data.user.uid);
   const avatarSeed = Math.random()
     .toString(36)
     .replace(/[^a-z0-9]+/g, '');
   await setDoc(docRef, {
     uid: data.user.uid,
-    nick: `adventurer-${Math.floor(Math.random() * 9999)}`,
+    nick: nick ?? `adventurer-${Math.floor(Math.random() * 9999)}`,
     email: data.user.email,
     avatar: {
       seed: avatarSeed,
@@ -49,9 +49,12 @@ export async function emailRegister(vm, form) {
   await setPersistence(auth, browserSessionPersistence);
   createUserWithEmailAndPassword(auth, form.email, form.password)
     .then(async (data) => {
-      await setUserBasicData(data);
-      const userData = await getUserData(data.user.uid);
-      vm.$store.commit('setUserData', userData);
+      await setUserBasicData(db, data, form.nick);
+      const userData = await getUserData(data.user.uid, db);
+      vm.$store.commit('setUserData', {
+        ...userData,
+        provider: data.providerId
+      });
       setTimeout(() => {
         vm.$router.replace({ name: 'Dashboard' });
       }, 2500);
@@ -70,8 +73,11 @@ export async function emailLogin(vm, remember, email, password) {
     .then(async (data) => {
       vm.alert.success = true;
       vm.loggingIn = false;
-      const userData = await getUserData(data.user.uid);
-      vm.$store.commit('setUserData', userData);
+      const userData = await getUserData(data.user.uid, db);
+      vm.$store.commit('setUserData', {
+        ...userData,
+        provider: data.providerId
+      });
       setTimeout(() => {
         vm.$router.replace({ name: 'Dashboard' });
       }, 2500);
@@ -98,17 +104,23 @@ export function providerLogin(vm, provider, auth, db) {
       const userData = await getUserData(data.user.uid, db);
       if (userData) {
         // Store user data and move him to dashboard
-        vm.$store.commit('setUserData', userData);
+        vm.$store.commit('setUserData', {
+          ...userData,
+          provider: data.providerId
+        });
         setTimeout(() => {
           vm.$router.replace({ name: 'Dashboard' });
         }, 2500);
       } else {
         // Set basic data in user collection
-        await setUserBasicData(db, data)
+        await setUserBasicData(db, data);
         // Get new user data
         const userData = await getUserData(data.user.uid, db);
         // Store user data and move him to dashboard
-        vm.$store.commit('setUserData', userData);
+        vm.$store.commit('setUserData', {
+          ...userData,
+          provider: data.providerId
+        });
         setTimeout(() => {
           vm.$router.replace({ name: 'Dashboard' });
         }, 2500);
