@@ -87,7 +87,7 @@ export default {
       return JSON.stringify(this.game) !== '{}';
     },
     commentsExists() {
-      return this.gameExists && this.game.comments && this.game.comments.length;
+      return !!(this.gameExists && this.game.comments && Object.keys(this.game.comments).length);
     },
   },
   methods: {
