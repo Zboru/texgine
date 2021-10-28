@@ -32,6 +32,7 @@ const createGame = async function (userId) {
       favorite_count: 0,
       rating: 0,
       comments: {},
+      public: false,
       created_at: new Date(),
       updated_at: new Date(),
     };
@@ -68,6 +69,7 @@ const cloneGame = async function (userId, gameId) {
       play_count: 0,
       favorite_count: 0,
       rating: 0,
+      public: false,
       title: `${game.title} - Clone`,
       id: newGameId,
     };
