@@ -58,6 +58,7 @@ export default {
 		removeGame(gameId) {
 			const gameIndex = this.games.findIndex(game => game.id === gameId);
 			this.games.splice(gameIndex, 1);
+			this.$store.commit('setListGame', {});
 		},
 		addGame(game) {
 			this.games.push(game);
