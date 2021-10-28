@@ -9,6 +9,7 @@
       </div>
       <input v-if="lazy" :type="type"
              autocomplete="off"
+             :disabled="disabled"
              @keydown="$emit('keydown', $event)"
              @focus="$emit('focus')"
              @blur="$emit('blur')"
@@ -17,6 +18,7 @@
              :class="inputClass">
       <input v-if="!lazy" :type="type"
              autocomplete="off"
+             :disabled="disabled"
              @keydown="$emit('keydown', $event)"
              @focus="$emit('focus')"
              @blur="$emit('blur')"
@@ -34,6 +36,7 @@ export default {
     label: String,
     placeholder: String,
     value: String,
+    disabled: Boolean,
     type: {
       type: String,
       default() {
