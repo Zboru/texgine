@@ -38,8 +38,7 @@ export default new Vuex.Store({
             state.game.steps[payload.internal_id] = payload;
         },
         removeStep: (state, payload) => {
-            const stepIndex = state.steps.findIndex((st) => st.id === payload.id);
-            state.steps.splice(stepIndex, 1);
+            delete state.game.steps[payload.internal_id]
         },
     },
     actions: {
