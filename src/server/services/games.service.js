@@ -1,11 +1,11 @@
 const {
-  app,
   db
 } = require('../firebase');
 const {
   doc,
   getDoc,
-  setDoc
+  setDoc,
+  deleteDoc
 } = require('firebase/firestore');
 
 function generateId() {
@@ -24,6 +24,7 @@ const createGame = async function (userId) {
     const game = {
       id: gameId,
       author: userData.nick,
+      author_uid: userData.uid,
       description: null,
       steps: {},
       canvas: {},
@@ -36,12 +37,12 @@ const createGame = async function (userId) {
       created_at: new Date(),
       updated_at: new Date(),
     };
-    // Save game to collection
+    // Save game to games collection
     const gameRef = await doc(db, 'games', gameId);
     await setDoc(gameRef, game);
 
     // Add game data to user's games collection
-    userData.games[gameId] = gameRef;
+    userData.games.push(gameRef);
     await setDoc(userRef, userData);
 
     return game;
@@ -56,7 +57,9 @@ const cloneGame = async function (userId, gameId) {
     const userRef = await doc(db, 'users', userId);
     const userSnap = await getDoc(userRef);
     const userData = userSnap.data();
-    const game = userData.games[gameId];
+
+    const gameDoc = await getDoc(doc(db, 'games', gameId));
+    const game = gameDoc.data();
 
     // Generate new game id
     const newGameId = generateId();
@@ -65,6 +68,7 @@ const cloneGame = async function (userId, gameId) {
     const newGame = {
       ...game,
       author: userData.nick,
+      author_uid: userData.uid,
       comments: {},
       play_count: 0,
       favorite_count: 0,
@@ -73,9 +77,12 @@ const cloneGame = async function (userId, gameId) {
       title: `${game.title} - Clone`,
       id: newGameId,
     };
+    // Save game to games collection
+    const gameRef = await doc(db, 'games', newGameId);
+    await setDoc(gameRef, newGame);
 
     // Add game to user games collection
-    userData.games[newGameId] = newGame;
+    userData.games.push(gameRef);
     await setDoc(userRef, userData);
 
     return newGame;
@@ -87,12 +94,19 @@ const cloneGame = async function (userId, gameId) {
 
 const deleteGame = async function (userId, gameId) {
   try {
+    // Delete game reference from array
     const userRef = await doc(db, 'users', userId);
     const userSnap = await getDoc(userRef);
     const userData = userSnap.data();
+
     const games = userData.games;
-    delete games[gameId];
+    const gameIndex = games.findIndex(game => game.id === gameId);
+    games.splice(gameIndex, 1);
     await setDoc(userRef, userData);
+
+    // Remove game from games collection
+    await deleteDoc(doc(db, 'games', gameId));
+
     return userData;
   } catch (err) {
     console.error(err);
@@ -102,14 +116,9 @@ const deleteGame = async function (userId, gameId) {
 
 const saveGame = async function (userId, gameId, data) {
   try {
-    const userRef = await doc(db, 'users', userId);
-    const userSnap = await getDoc(userRef);
-    const userData = userSnap.data();
-
-    userData.games[gameId] = data;
-    await setDoc(userRef, userData);
-
-    return userData;
+    const gameRef = await doc(db, 'games', gameId);
+    await setDoc(gameRef, data);
+    return data;
   } catch (err) {
     console.error(err);
     return err;
@@ -127,7 +136,7 @@ const addComment = async function (userId, gameId, data) {
     const userData = userSnap.data();
 
     // Create comment object in case it does not exist
-    if (typeof gameData.comments === "undefined") {
+    if (typeof gameData.comments === 'undefined') {
       gameData.comments = {};
     }
 
@@ -135,17 +144,15 @@ const addComment = async function (userId, gameId, data) {
     const comment = {
       id: commentId,
       author: userData.nick,
+      author_uid: userData.uid,
       authorAvatar: userData.avatar.url,
       text: data.comment,
       created_at: new Date(),
       votes: {}
     };
-    console.log(gameData,comment);
+
     gameData.comments[commentId] = comment;
     await setDoc(gameRef, gameData);
-
-    userData.games[gameId] = gameData;
-    await setDoc(userRef, userData);
 
     return comment;
   } catch (err) {
@@ -156,16 +163,15 @@ const addComment = async function (userId, gameId, data) {
 
 const vote = async function (userId, gameId, commentId, type) {
   try {
-    const userRef = await doc(db, 'users', userId);
-    const userSnap = await getDoc(userRef);
-    const userData = userSnap.data();
+    const gameRef = await doc(db, 'games', gameId);
+    const gameSnap = await getDoc(gameRef);
+    const gameData = gameSnap.data();
 
-    const game = userData.games[gameId];
-    const comment = game.comments[commentId];
+    const comment = gameData.comments[commentId];
 
-    comment.votes[userId] = type === "upvote" ? 1 : -1
+    comment.votes[userId] = type === 'upvote' ? 1 : -1;
 
-    await setDoc(userRef, userData);
+    await setDoc(gameRef, gameData);
     return comment;
   } catch (err) {
     console.error(err);

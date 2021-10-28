@@ -56,9 +56,8 @@ export default {
     deleteGame() {
       this.dialogs.delete = true;
     },
-    afterDelete(games) {
-      this.$emit('deleted', games);
-      this.$store.commit('setListGame', {});
+    afterDelete(gameId) {
+      this.$emit('deleted', gameId);
     },
     afterClone(game) {
       this.$emit('cloned', game);

@@ -4,12 +4,14 @@ const {
   getDoc,
   updateDoc
 } = require('firebase/firestore');
+const { hydrate } = require('../utils');
 
 const getGames = async function (userId) {
   try {
     const userRef = await doc(db, 'users', userId);
     const userSnap = await getDoc(userRef);
-    return userSnap.data();
+    const userData = userSnap.data();
+    return await hydrate(userData.games);
   } catch (err) {
     console.log(err);
     return err;

@@ -6,7 +6,7 @@ const getUser = function (req, res) {
 
 const getGames = function (req, res) {
   userService.getGames(req.params.id).then((response) => {
-    res.json({ games: response.games });
+    res.json({ games: response });
   });
 };
 

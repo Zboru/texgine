@@ -21,8 +21,8 @@ const deleteGame = function (req, res) {
   const gameId = req.params.id;
   const userId = req.authId;
   gamesService.deleteGame(userId, gameId)
-    .then((user) => {
-      res.json(user);
+    .then(() => {
+      res.sendStatus(200);
     });
 };
 
@@ -52,8 +52,8 @@ const vote = function (req, res) {
   const userId = req.authId;
   const type = req.body.type;
   gamesService.vote(userId, gameId, commentId, type)
-    .then (response => {
-
+    .then (vote => {
+      res.json(vote);
     });
 }
 
