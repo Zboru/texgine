@@ -4,6 +4,7 @@ const router = express.Router();
 const gamesController = require('../controllers/games');
 const authMiddleware = require('../middleware/auth');
 
+router.get('/api/games', authMiddleware, gamesController.getGames)
 router.post('/api/games/', authMiddleware, gamesController.createGame);
 router.post('/api/games/:id/clone', authMiddleware, gamesController.cloneGame);
 router.post('/api/games/:id/addComment', authMiddleware, gamesController.addComment);

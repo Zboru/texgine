@@ -5,13 +5,27 @@ const {
 	doc,
 	getDoc,
 	setDoc,
-	deleteDoc
+	deleteDoc,
+	getDocs,
+	collection
 } = require('firebase/firestore');
 
 function generateId() {
 	return Math.random()
 		.toString(36)
 		.replace(/[^a-z0-9]+/g, '');
+}
+
+const getGames = async function () {
+	const games = [];
+	const querySnapshot = await getDocs(collection(db, "games"));
+	querySnapshot.forEach((doc) => {
+		const game = doc.data();
+		if (game.public === true) {
+			games.push(game);
+		}
+	});
+	return games;
 }
 
 const createGame = async function (userId) {
@@ -185,6 +199,7 @@ const vote = async function (userId, gameId, commentId, type) {
 };
 
 module.exports = {
+	getGames,
 	createGame,
 	cloneGame,
 	deleteGame,
