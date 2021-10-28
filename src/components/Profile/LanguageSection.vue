@@ -11,8 +11,8 @@
 			</div>
 			<div class="mt-5 md:mt-0 md:col-span-2">
 				<div class="shadow sm:rounded-md">
-					<div class="px-4 py-5 bg-white space-y-6 sm:p-6">
-						<t-select :items="languages" v-model="selectedLanguage"></t-select>
+					<div class="px-4 py-4 bg-white space-y-6 sm:p-6 sm:pt-4">
+						<t-select label="Language" placeholder="English" :items="languages" v-model="selectedLanguage"></t-select>
 					</div>
 					<div class="px-4 py-3 bg-gray-50 text-right sm:px-6">
 						<t-button :loading="loading.save" :disabled="loading.save" @click="save" variant="success"
