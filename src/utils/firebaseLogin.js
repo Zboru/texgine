@@ -30,7 +30,8 @@ async function setUserBasicData(db, data, nick = null) {
       service: 'open-peeps',
       url: `https://avatars.dicebear.com/api/open-peeps/${avatarSeed}.svg`
     },
-    games: {}
+    language: 'english',
+    games: []
   });
 }
 
