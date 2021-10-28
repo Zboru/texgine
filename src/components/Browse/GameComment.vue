@@ -18,11 +18,11 @@
 						icon="bx:bx-downvote"></t-icon>
 			</div>
 			<div class="flex items-center">
-        <span class="flex items-center">
+        <span class="flex items-center select-none">
           <t-icon class="mx-1 text-green-500" icon="bx:bx-upvote"></t-icon>
           {{upvotes}}
         </span>
-				<span class="flex items-center">
+				<span class="flex items-center select-none">
           <t-icon class="mx-1 text-red-500" icon="bx:bx-downvote"></t-icon>
           {{downvotes}}
         </span>
